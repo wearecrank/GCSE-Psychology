@@ -915,7 +915,7 @@
   <div id="settingsScreen" class="screen">
     <div class="settings-panel">
       <h2>⚙️ Admin Settings</h2>
-      <p>Set the password your daughter will use to open the app, and paste your API key. Both are stored only on this device — never in the app file itself.</p>
+      <p>Set the password your daughter will use to open the app. The API key is configured on the server (Railway) — nothing to enter here.</p>
 
       <label class="settings-label" for="adminPassInput">Set App Password (what your daughter types)</label>
       <input
@@ -926,20 +926,10 @@
         autocomplete="off"
         spellcheck="false"
       />
-
-      <label class="settings-label" for="apiKeyInput">Anthropic API Key</label>
-      <input
-        class="settings-input"
-        type="password"
-        id="apiKeyInput"
-        placeholder="sk-ant-api03-..."
-        autocomplete="off"
-        spellcheck="false"
-      />
       <div class="settings-status" id="keyStatus"></div>
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveApiKey()">💾 Save Settings</button>
-        <button class="btn btn-secondary" onclick="clearApiKey()">🗑️ Clear All</button>
+        <button class="btn btn-primary" onclick="savePassword()">💾 Save Password</button>
+        <button class="btn btn-secondary" onclick="clearPassword()">🗑️ Clear Password</button>
       </div>
     </div>
 
@@ -1973,22 +1963,16 @@ function simpleDecode(encoded, pass) {
 }
 
 function getApiKey() {
-  const encoded = localStorage.getItem('psych_api_key_enc');
-  const passHash = localStorage.getItem('psych_pass_hash');
-  if (!encoded || !passHash) return '';
-  // We can't decode without the password — but for API calls we store a session copy
-  return sessionStorage.getItem('psych_key_session') || '';
+  return ''; // Key is on server (Railway); not used for API calls anymore
 }
 
 function hashPass(pass) {
-  // Simple hash — just enough to verify the password on unlock
   let h = 0;
   for (let i = 0; i < pass.length; i++) h = (Math.imul(31, h) + pass.charCodeAt(i)) | 0;
   return h.toString(36);
 }
 
-function saveApiKey() {
-  const key = document.getElementById('apiKeyInput').value.trim();
+function savePassword() {
   const pass = document.getElementById('adminPassInput').value.trim();
   const status = document.getElementById('keyStatus');
 
@@ -1997,31 +1981,17 @@ function saveApiKey() {
     status.className = 'settings-status err';
     return;
   }
-  if (!key.startsWith('sk-ant-')) {
-    status.textContent = '⚠️ That doesn\'t look like a valid API key — it should start with sk-ant-';
-    status.className = 'settings-status err';
-    return;
-  }
-
-  // Store encoded key and password hash
-  localStorage.setItem('psych_api_key_enc', simpleEncode(key, pass));
   localStorage.setItem('psych_pass_hash', hashPass(pass));
-  // Also store in session so it's usable right now
-  sessionStorage.setItem('psych_key_session', key);
-
-  document.getElementById('apiKeyInput').value = '';
   document.getElementById('adminPassInput').value = '';
-  status.textContent = '✅ Saved! Your daughter will be asked for the password when she first opens the app on a new device.';
+  status.textContent = '✅ Password saved! Your daughter will use it to open the app on this device.';
   status.className = 'settings-status ok';
   updateKeyStatus();
 }
 
-function clearApiKey() {
-  localStorage.removeItem('psych_api_key_enc');
+function clearPassword() {
   localStorage.removeItem('psych_pass_hash');
-  sessionStorage.removeItem('psych_key_session');
   const status = document.getElementById('keyStatus');
-  status.textContent = '🗑️ All settings cleared.';
+  status.textContent = '🗑️ Password cleared.';
   status.className = 'settings-status err';
   updateKeyStatus();
 }
@@ -2030,7 +2000,6 @@ function tryUnlock() {
   const pass = document.getElementById('unlockInput').value.trim();
   const status = document.getElementById('unlockStatus');
   const storedHash = localStorage.getItem('psych_pass_hash');
-  const encodedKey = localStorage.getItem('psych_api_key_enc');
 
   if (!storedHash) {
     // No password set yet — show secret admin access hint
@@ -2046,26 +2015,20 @@ function tryUnlock() {
     return;
   }
 
-  // Correct — decode and store key in session
-  if (encodedKey) {
-    const key = simpleDecode(encodedKey, pass);
-    sessionStorage.setItem('psych_key_session', key);
-  }
-
+  // Correct — unlock
+  sessionStorage.setItem('psych_key_session', 'ok'); // any value; we use server key now
   showScreen('paperScreen');
 }
 
 function updateKeyStatus() {
   const el = document.getElementById('keyCurrentStatus');
   if (!el) return;
-  const hasKey = !!localStorage.getItem('psych_api_key_enc');
   const hasPass = !!localStorage.getItem('psych_pass_hash');
-  if (hasKey && hasPass) {
-    el.innerHTML = `✅ <strong>All set!</strong> Password and API key are saved on this device.<br><br>
-    <span style="font-size:0.8rem;color:var(--text-muted)">Your daughter will be asked for her password when opening on a new device. The API key is encoded and never visible.</span>`;
+  if (hasPass) {
+    el.innerHTML = `✅ <strong>Password set.</strong> Your daughter will enter it to open the app. AI feedback uses the key configured on the server.`;
     el.style.color = 'var(--green-light)';
   } else {
-    el.innerHTML = `⚠️ <strong>Not set up yet</strong> — enter a password and API key above to get started.`;
+    el.innerHTML = `⚠️ <strong>No password yet</strong> — set one above so your daughter can unlock the app.`;
     el.style.color = 'var(--text-muted)';
   }
 }
@@ -2432,23 +2395,6 @@ function submitShortAnswer() {
   const aiFbBody = document.getElementById('aiFeedbackBody');
   aiFb.classList.add('show');
 
-  const apiKey = getApiKey();
-
-  if (!apiKey) {
-    // No key — show model answer for self-marking
-    aiFbBody.innerHTML = `
-      <p style="margin-bottom:10px">✅ <strong>Compare your answer to the model answer below.</strong> Give yourself a mark out of ${q.marks} — be honest!</p>
-      <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px;line-height:1.7;font-size:0.9rem"><strong>Model answer:</strong><br><br>${q.modelAnswer}</div>
-      <p style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)">💡 Tip: Look for key terms, named studies, and specific details. Each of those is worth marks!</p>
-      <p style="margin-top:8px;font-size:0.8rem;color:var(--text-muted)">🔑 Add an API key in ⚙️ Settings to get live AI tutor feedback.</p>
-    `;
-    state.score += 0.5;
-    state.xp += q.marks * 8;
-    saveState();
-    document.getElementById('btnRow').innerHTML = `<button class="btn btn-primary" onclick="nextQuestion()">Next question →</button>`;
-    return;
-  }
-
   aiFbBody.innerHTML = `<div class="ai-loading">Thinking... <div class="dot-spin"><span></span><span></span><span></span></div></div>`;
 
   const prompt = `You are a helpful and encouraging GCSE Psychology tutor. A student has answered this exam question:
@@ -2467,21 +2413,20 @@ Please give the student:
 
 Keep your response friendly, encouraging, and clear. Use simple language. Format with short paragraphs, not bullet points. The student has ADHD so keep it concise and positive.`;
 
-  fetch('https://api.anthropic.com/v1/messages', {
+  const body = {
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 1000,
+    messages: [{ role: 'user', content: prompt }]
+  };
+
+  fetch('/api/anthropic', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   })
   .then(r => r.json())
   .then(data => {
+    if (data.error) throw new Error(data.error);
     const text = data.content?.find(c => c.type === 'text')?.text || 'Could not get feedback right now.';
     aiFbBody.innerHTML = text.replace(/\n/g, '<br>');
     state.score += 0.5;
@@ -2493,6 +2438,7 @@ Keep your response friendly, encouraging, and clear. Use simple language. Format
     aiFbBody.innerHTML = `
       <p style="margin-bottom:10px">✅ <strong>Compare your answer to the model answer below.</strong> Give yourself a mark out of ${q.marks} — be honest!</p>
       <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px;line-height:1.7;font-size:0.9rem"><strong>Model answer:</strong><br><br>${q.modelAnswer}</div>
+      <p style="margin-top:8px;font-size:0.8rem;color:var(--text-muted)">💡 AI feedback is provided by the server. If you see this, the app may be open from a file or the server key is not set.</p>
     `;
     state.score += 0.5;
     state.xp += q.marks * 8;
@@ -2823,15 +2769,6 @@ function generateAiReport() {
   const total = Object.values(state.attempts).reduce((a, b) => a + b, 0);
   if (total === 0) { alert('Complete some revision sessions first!'); return; }
 
-  const apiKey = getApiKey();
-
-  if (!apiKey) {
-    // No key — use smart static report
-    document.getElementById('reportAiBox').innerHTML = buildStaticReport();
-    return;
-  }
-
-  // Key available — call AI for a truly personalised report
   document.getElementById('reportAiBox').innerHTML = `
     <div class="ai-loading" style="justify-content:center;padding:12px">
       Generating your personalised report...
@@ -2859,21 +2796,20 @@ Please write a short, warm, and encouraging report (around 150 words) that:
 
 Keep the language simple, positive, and direct. Avoid long paragraphs. This student responds best to short, clear feedback with specific actions they can take.`;
 
-  fetch('https://api.anthropic.com/v1/messages', {
+  const body = {
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 600,
+    messages: [{ role: 'user', content: prompt }]
+  };
+
+  fetch('/api/anthropic', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 600,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   })
   .then(r => r.json())
   .then(data => {
+    if (data.error) throw new Error(data.error);
     const text = data.content?.find(c => c.type === 'text')?.text;
     if (text) {
       document.getElementById('reportAiBox').innerHTML = text.replace(/\n/g, '<br>');
