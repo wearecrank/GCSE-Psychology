@@ -794,6 +794,134 @@
   .settings-status.ok { background: rgba(16,185,129,0.15); color: var(--green-light); display: block; }
   .settings-status.err { background: rgba(239,68,68,0.15); color: var(--red-light); display: block; }
 
+  /* ========== NICKNAME SCREEN ========== */
+  .nickname-screen {
+    text-align: center;
+    padding: 30px 20px;
+  }
+  .nickname-input {
+    width: 100%;
+    max-width: 340px;
+    background: var(--bg);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-size: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .nickname-input:focus { outline: none; border-color: var(--purple-light); }
+
+  /* ========== LEADERBOARD ========== */
+  .leaderboard-screen { padding: 10px 0; }
+  .leaderboard-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .lb-tab {
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .lb-tab.active { background: var(--purple); border-color: var(--purple); color: white; }
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .lb-row.me { border-color: var(--purple-light); background: rgba(124,58,237,0.15); }
+  .lb-rank {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .lb-rank.gold { color: #FFD700; }
+  .lb-rank.silver { color: #C0C0C0; }
+  .lb-rank.bronze { color: #CD7F32; }
+  .lb-name {
+    flex: 1;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .lb-name .me-badge {
+    font-size: 0.7rem;
+    background: var(--purple);
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .lb-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--yellow);
+  }
+  .lb-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .lb-loading {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    font-size: 0.9rem;
+  }
+  .lb-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+  }
+
+  /* ========== ADMIN REPORT ========== */
+  .admin-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .admin-row:last-child { border-bottom: none; }
+  .admin-name { flex: 1; font-weight: 700; font-size: 0.9rem; }
+  .admin-stat {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    text-align: center;
+    min-width: 44px;
+  }
+  .admin-col-head {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    min-width: 44px;
+  }
+
   /* ========== PAPER PICKER ========== */
   .paper-picker {
     display: flex;
@@ -948,6 +1076,62 @@
       <p id="keyCurrentStatus" style="margin-bottom:0">Checking...</p>
     </div>
 
+    <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="openAdminReport()">👑 View Admin Report</button>
+      <button class="btn btn-secondary" onclick="goHome()">🏠 Back to Home</button>
+    </div>
+  </div>
+
+  <div id="nicknameScreen" class="screen">
+    <div class="nickname-screen">
+      <div style="font-size:3rem;margin-bottom:16px">🏆</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--yellow);margin-bottom:8px">Choose your nickname!</div>
+      <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:28px;max-width:320px;margin-left:auto;margin-right:auto">This is how you'll appear on the leaderboard. Keep it fun — no real names needed!</div>
+      <input
+        class="nickname-input"
+        type="text"
+        id="nicknameInput"
+        placeholder="e.g. PsychStar ⭐"
+        maxlength="20"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') saveNickname()"
+      />
+      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:20px">Max 20 characters · No real names please!</div>
+      <button class="btn btn-primary" style="min-width:200px" onclick="saveNickname()">🚀 Let's go!</button>
+      <div class="settings-status" id="nicknameStatus" style="max-width:340px;margin:12px auto 0"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: LEADERBOARD -->
+  <div id="leaderboardScreen" class="screen">
+    <div class="report-header">
+      <h2>🏆 Leaderboard</h2>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Top 10 — who's revising the hardest?</p>
+    </div>
+    <div class="leaderboard-tabs">
+      <div class="lb-tab active" onclick="switchLbTab('xp', this)">⭐ Total XP</div>
+      <div class="lb-tab" onclick="switchLbTab('streak', this)">🔥 Best Streak</div>
+      <div class="lb-tab" onclick="switchLbTab('accuracy_p1', this)">📗 Paper 1</div>
+      <div class="lb-tab" onclick="switchLbTab('accuracy_p2', this)">📘 Paper 2</div>
+      <div class="lb-tab" onclick="switchLbTab('sessions', this)">📅 Sessions</div>
+    </div>
+    <div id="leaderboardList">
+      <div class="lb-loading">Loading leaderboard... <div class="dot-spin" style="display:inline-flex;margin-left:8px"><span></span><span></span><span></span></div></div>
+    </div>
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-secondary" onclick="goHome()">🏠 Back to Home</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: ADMIN REPORT -->
+  <div id="adminReportScreen" class="screen">
+    <div class="report-header">
+      <h2>👑 Admin Report</h2>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Full breakdown across all students</p>
+    </div>
+    <div id="adminReportContent">
+      <div class="lb-loading">Loading...</div>
+    </div>
     <div style="text-align:center;margin-top:20px">
       <button class="btn btn-secondary" onclick="goHome()">🏠 Back to Home</button>
     </div>
@@ -1031,7 +1215,10 @@
     <div style="margin-top:32px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div class="section-label" style="margin-bottom:0">📊 Your Progress</div>
-        <button class="btn btn-secondary" style="font-size:0.8rem;padding:8px 16px" onclick="showReport()">📋 Full Report</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:8px 16px" onclick="openLeaderboard()">🏆 Leaderboard</button>
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:8px 16px" onclick="showReport()">📋 Report</button>
+        </div>
       </div>
       <div class="dashboard">
         <div class="stat-card">
@@ -1185,8 +1372,318 @@
 
 <script>
 // ==========================================
-// QUESTION BANK — built from 2023 & 2024 AQA GCSE Psychology Paper 1 past papers
+// SUPABASE CONFIG
 // ==========================================
+const SUPABASE_URL = 'https://oaoxzlfwijavwnubbpra.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_NeKGfpl2uAbOr5-1diX5Xg_wYE1N4Gg';
+
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// ==========================================
+// NICKNAME
+// ==========================================
+
+function getNickname() {
+  return localStorage.getItem('psych_nickname') || '';
+}
+
+function saveNickname() {
+  const val = document.getElementById('nicknameInput').value.trim();
+  const status = document.getElementById('nicknameStatus');
+  if (!val || val.length < 2) {
+    status.textContent = '⚠️ Please enter at least 2 characters.';
+    status.className = 'settings-status err';
+    return;
+  }
+  localStorage.setItem('psych_nickname', val);
+  // Create entry in leaderboard if not exists
+  upsertLeaderboard();
+  showScreen('paperScreen');
+}
+
+async function upsertLeaderboard() {
+  const nickname = getNickname();
+  if (!nickname) return;
+
+  const p1Topics = ['memory','perception','development','research'];
+  const p2Topics = ['social','language','brain','psychproblems'];
+
+  const p1Attempts = p1Topics.reduce((s,t) => s + (state.attempts[t]||0), 0);
+  const p1Correct  = p1Topics.reduce((s,t) => s + (state.correct[t]||0), 0);
+  const p2Attempts = p2Topics.reduce((s,t) => s + (state.attempts[t]||0), 0);
+  const p2Correct  = p2Topics.reduce((s,t) => s + (state.correct[t]||0), 0);
+
+  const topicScores = {};
+  [...p1Topics, ...p2Topics].forEach(t => {
+    topicScores[t] = {
+      attempts: state.attempts[t] || 0,
+      correct: state.correct[t] || 0,
+      pct: state.attempts[t] > 0 ? Math.round((state.correct[t]/state.attempts[t])*100) : 0
+    };
+  });
+
+  const payload = {
+    nickname,
+    xp: state.xp || 0,
+    streak: state.streak || 0,
+    best_streak: Math.max(state.streak || 0, parseInt(localStorage.getItem('psych_best_streak')||'0')),
+    sessions: state.sessions || 0,
+    accuracy_p1: p1Attempts > 0 ? Math.round(p1Correct/p1Attempts*100) : 0,
+    accuracy_p2: p2Attempts > 0 ? Math.round(p2Correct/p2Attempts*100) : 0,
+    attempts_p1: p1Attempts,
+    attempts_p2: p2Attempts,
+    correct_p1: p1Correct,
+    correct_p2: p2Correct,
+    topic_scores: topicScores,
+    last_seen: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    await sbFetch('leaderboard?on_conflict=nickname', {
+      method: 'POST',
+      prefer: 'resolution=merge-duplicates,return=minimal',
+      body: JSON.stringify(payload)
+    });
+    // Save best streak locally
+    localStorage.setItem('psych_best_streak', payload.best_streak);
+  } catch(e) {
+    console.warn('Leaderboard sync failed:', e);
+  }
+}
+
+// ==========================================
+// LEADERBOARD SCREEN
+// ==========================================
+
+let currentLbTab = 'xp';
+
+function openLeaderboard() {
+  showScreen('leaderboardScreen');
+  loadLeaderboard(currentLbTab);
+  // Sync current player's score silently
+  upsertLeaderboard();
+}
+
+function switchLbTab(tab, el) {
+  currentLbTab = tab;
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadLeaderboard(tab);
+}
+
+async function loadLeaderboard(sortBy) {
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = `<div class="lb-loading">Loading... <div class="dot-spin" style="display:inline-flex;margin-left:8px"><span></span><span></span><span></span></div></div>`;
+
+  const colLabels = {
+    xp: { label: 'XP', unit: '' },
+    streak: { label: 'Best Streak', unit: ' days' },
+    accuracy_p1: { label: 'Paper 1', unit: '%' },
+    accuracy_p2: { label: 'Paper 2', unit: '%' },
+    sessions: { label: 'Sessions', unit: '' }
+  };
+
+  try {
+    const rows = await sbFetch(`leaderboard?select=nickname,xp,streak,best_streak,sessions,accuracy_p1,accuracy_p2&order=${sortBy}.desc.nullslast&limit=10`);
+    const me = getNickname();
+
+    if (!rows || rows.length === 0) {
+      list.innerHTML = `<div class="lb-empty"><div style="font-size:2.5rem;margin-bottom:12px">🌱</div>No scores yet — be the first!</div>`;
+      return;
+    }
+
+    const rankEmojis = ['🥇','🥈','🥉'];
+    const rankClasses = ['gold','silver','bronze'];
+
+    list.innerHTML = rows.map((row, i) => {
+      const isMe = row.nickname === me;
+      const val = sortBy === 'streak' ? row.best_streak : row[sortBy];
+      const display = val !== null && val !== undefined ? val + colLabels[sortBy].unit : '–';
+      const rankDisplay = i < 3
+        ? `<span class="lb-rank ${rankClasses[i]}">${rankEmojis[i]}</span>`
+        : `<span class="lb-rank" style="color:var(--text-muted);font-size:1rem">${i+1}</span>`;
+
+      return `
+        <div class="lb-row ${isMe ? 'me' : ''}">
+          ${rankDisplay}
+          <div class="lb-name">
+            ${row.nickname}
+            ${isMe ? '<span class="me-badge">You</span>' : ''}
+          </div>
+          <div>
+            <div class="lb-value">${display}</div>
+            <div class="lb-sub">${colLabels[sortBy].label}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // If current player not in top 10, show their position at bottom
+    const myPos = rows.findIndex(r => r.nickname === me);
+    if (me && myPos === -1) {
+      // Fetch their rank
+      try {
+        const allRows = await sbFetch(`leaderboard?select=nickname,${sortBy}&order=${sortBy}.desc.nullslast`);
+        const myRank = allRows.findIndex(r => r.nickname === me) + 1;
+        const myRow = allRows.find(r => r.nickname === me);
+        if (myRow) {
+          const val = sortBy === 'streak' ? myRow.best_streak : myRow[sortBy];
+          list.innerHTML += `
+            <div style="text-align:center;color:var(--text-muted);font-size:0.8rem;padding:8px 0">· · ·</div>
+            <div class="lb-row me">
+              <span class="lb-rank" style="color:var(--text-muted);font-size:1rem">${myRank}</span>
+              <div class="lb-name">${me} <span class="me-badge">You</span></div>
+              <div>
+                <div class="lb-value">${val !== null ? val + colLabels[sortBy].unit : '–'}</div>
+                <div class="lb-sub">${colLabels[sortBy].label}</div>
+              </div>
+            </div>`;
+        }
+      } catch(e) {}
+    }
+
+  } catch(e) {
+    list.innerHTML = `<div class="lb-empty">⚠️ Could not load leaderboard right now.<br><span style="font-size:0.8rem">Check your internet connection.</span></div>`;
+  }
+}
+
+// ==========================================
+// ADMIN REPORT
+// ==========================================
+
+async function openAdminReport() {
+  showScreen('adminReportScreen');
+  const content = document.getElementById('adminReportContent');
+  content.innerHTML = `<div class="lb-loading">Loading all student data...</div>`;
+
+  try {
+    const rows = await sbFetch('leaderboard?select=*&order=xp.desc.nullslast');
+
+    if (!rows || rows.length === 0) {
+      content.innerHTML = `<div class="lb-empty">No student data yet.</div>`;
+      return;
+    }
+
+    const p1Topics = ['memory','perception','development','research'];
+    const p2Topics = ['social','language','brain','psychproblems'];
+    const p1Labels = { memory:'Memory', perception:'Perception', development:'Development', research:'Research' };
+    const p2Labels = { social:'Social', language:'Language', brain:'Brain', psychproblems:'Psych Problems' };
+
+    // Summary stats
+    const totalStudents = rows.length;
+    const avgXp = Math.round(rows.reduce((s,r) => s + (r.xp||0), 0) / totalStudents);
+    const topStreak = Math.max(...rows.map(r => r.best_streak||0));
+    const mostActive = rows.reduce((a,b) => (b.sessions||0) > (a.sessions||0) ? b : a);
+
+    let html = `
+      <div class="settings-panel">
+        <h2>📊 Summary</h2>
+        <div class="dashboard" style="margin-bottom:0">
+          <div class="stat-card">
+            <div class="stat-number" style="color:var(--purple-light)">${totalStudents}</div>
+            <div class="stat-label">Students</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:var(--yellow)">${avgXp}</div>
+            <div class="stat-label">Avg XP</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:var(--teal-light)">${topStreak}</div>
+            <div class="stat-label">Top Streak</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:var(--pink-light)">${mostActive.sessions||0}</div>
+            <div class="stat-label">Most sessions<br><span style="font-size:0.7rem">${mostActive.nickname}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-panel" style="margin-top:16px">
+        <h2>👥 All Students</h2>
+        <div style="overflow-x:auto">
+          <div style="display:flex;gap:0;padding:0 0 8px 0;min-width:500px">
+            <div style="flex:1;font-size:0.75rem;color:var(--text-muted);font-weight:700">NICKNAME</div>
+            <div class="admin-col-head">XP</div>
+            <div class="admin-col-head">STREAK</div>
+            <div class="admin-col-head">SESSIONS</div>
+            <div class="admin-col-head">P1 %</div>
+            <div class="admin-col-head">P2 %</div>
+            <div class="admin-col-head">LAST SEEN</div>
+          </div>`;
+
+    rows.forEach(r => {
+      const lastSeen = r.last_seen ? new Date(r.last_seen).toLocaleDateString('en-GB', {day:'numeric',month:'short'}) : '–';
+      html += `
+        <div class="admin-row" style="min-width:500px">
+          <div class="admin-name">${r.nickname}</div>
+          <div class="admin-stat" style="color:var(--yellow)">${r.xp||0}</div>
+          <div class="admin-stat" style="color:var(--teal-light)">${r.best_streak||0}d</div>
+          <div class="admin-stat" style="color:var(--purple-light)">${r.sessions||0}</div>
+          <div class="admin-stat" style="color:${(r.accuracy_p1||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p1||0}%</div>
+          <div class="admin-stat" style="color:${(r.accuracy_p2||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p2||0}%</div>
+          <div class="admin-stat" style="font-size:0.72rem;color:var(--text-muted)">${lastSeen}</div>
+        </div>`;
+    });
+
+    html += `</div></div>`;
+
+    // Topic breakdown across all students
+    html += `<div class="settings-panel" style="margin-top:16px"><h2>📚 Topic Averages (Paper 1)</h2>`;
+    p1Topics.forEach(t => {
+      const scores = rows.map(r => r.topic_scores?.[t]?.pct).filter(v => v !== undefined && v !== null);
+      const avg = scores.length > 0 ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+      html += `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:0.85rem;font-weight:700">${p1Labels[t]}</span>
+            <span style="font-size:0.85rem;color:${avg!==null&&avg>=70?'var(--green)':'var(--yellow)'}">${avg!==null?avg+'%':'No data'}</span>
+          </div>
+          <div class="progress-bar-mini" style="height:8px">
+            <div class="progress-bar-mini-fill" style="width:${avg||0}%;background:${avg!==null&&avg>=70?'var(--green)':'var(--yellow)'}"></div>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+
+    html += `<div class="settings-panel" style="margin-top:16px"><h2>📚 Topic Averages (Paper 2)</h2>`;
+    p2Topics.forEach(t => {
+      const scores = rows.map(r => r.topic_scores?.[t]?.pct).filter(v => v !== undefined && v !== null);
+      const avg = scores.length > 0 ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+      html += `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:0.85rem;font-weight:700">${p2Labels[t]}</span>
+            <span style="font-size:0.85rem;color:${avg!==null&&avg>=70?'var(--green)':'var(--yellow)'}">${avg!==null?avg+'%':'No data'}</span>
+          </div>
+          <div class="progress-bar-mini" style="height:8px">
+            <div class="progress-bar-mini-fill" style="width:${avg||0}%;background:${avg!==null&&avg>=70?'var(--teal)':'var(--yellow)'}"></div>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+
+    content.innerHTML = html;
+
+  } catch(e) {
+    content.innerHTML = `<div class="lb-empty">⚠️ Could not load report: ${e.message}</div>`;
+  }
+}
+
+
 
 const questionBank = {
 
@@ -2088,17 +2585,17 @@ function secretAdminTap() {
 (function() {
   const hasPass = !!localStorage.getItem('psych_pass_hash');
   const sessionKey = sessionStorage.getItem('psych_key_session');
+  const hasNickname = !!localStorage.getItem('psych_nickname');
   if (!hasPass) {
-    // Never been set up — show unlock screen with setup message,
-    // but also reveal the settings button so admin can set it up
     document.getElementById('settingsBtn').style.display = 'flex';
     showScreen('settingsScreen');
     updateKeyStatus();
   } else if (!sessionKey) {
-    // Set up but not unlocked this session — show password screen
     showScreen('unlockScreen');
+  } else if (!hasNickname) {
+    showScreen('nicknameScreen');
   }
-  // else already unlocked this session — paperScreen shown by default
+  // else paperScreen shown by default
 })();
 
 
@@ -2930,6 +3427,9 @@ function showResults() {
   }
 
   saveState();
+
+  // Sync score to leaderboard silently
+  upsertLeaderboard();
 
   if (pct >= 70) confettiShower();
 
