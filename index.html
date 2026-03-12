@@ -994,7 +994,7 @@
 <div class="container">
   <!-- HEADER -->
   <div class="header">
-    <h1 onclick="secretAdminTap()">🧠 Psychology Revision</h1>
+    <h1>🧠 Psychology Revision</h1>
     <p id="headerSubtitle">AQA GCSE · Let's get those marks! 💪</p>
   </div>
 
@@ -1014,73 +1014,6 @@
     </div>
   </div>
 
-  <!-- SETTINGS BUTTON (only shown to admin) -->
-  <button class="settings-btn" id="settingsBtn" onclick="showScreen('settingsScreen'); updateKeyStatus();" title="Settings" style="display:none">⚙️</button>
-
-  <!-- SCREEN: UNLOCK (shown on first visit if key not yet set up on this device) -->
-  <div id="unlockScreen" class="screen">
-    <div style="text-align:center;padding:40px 20px 20px">
-      <div style="font-size:3.5rem;margin-bottom:16px">🔐</div>
-      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--purple-light);margin-bottom:8px">Welcome back!</div>
-      <div style="color:var(--text-muted);font-size:0.95rem;margin-bottom:32px">Enter your password to start revising</div>
-    </div>
-    <div class="settings-panel" style="max-width:400px;margin:0 auto">
-      <label class="settings-label" for="unlockInput">Password</label>
-      <input
-        class="settings-input"
-        type="password"
-        id="unlockInput"
-        placeholder="Enter your password..."
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter') tryUnlock()"
-      />
-      <div class="settings-status" id="unlockStatus"></div>
-      <button class="btn btn-primary" style="width:100%" onclick="tryUnlock()">🚀 Let's go!</button>
-    </div>
-  </div>
-
-  <!-- SCREEN: SETTINGS (admin only — accessed via secret tap) -->
-  <div id="settingsScreen" class="screen">
-    <div class="settings-panel">
-      <h2>⚙️ Admin Settings</h2>
-      <p>Set the password your daughter will use to open the app, and paste your API key. Both are stored only on this device — never in the app file itself.</p>
-
-      <label class="settings-label" for="adminPassInput">Set App Password (what your daughter types)</label>
-      <input
-        class="settings-input"
-        type="text"
-        id="adminPassInput"
-        placeholder="e.g. psychology123"
-        autocomplete="off"
-        spellcheck="false"
-      />
-
-      <label class="settings-label" for="apiKeyInput">Anthropic API Key</label>
-      <input
-        class="settings-input"
-        type="password"
-        id="apiKeyInput"
-        placeholder="sk-ant-api03-..."
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <div class="settings-status" id="keyStatus"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveApiKey()">💾 Save Settings</button>
-        <button class="btn btn-secondary" onclick="clearApiKey()">🗑️ Clear All</button>
-      </div>
-    </div>
-
-    <div class="settings-panel" style="margin-top:16px">
-      <h2>🔑 Current Status</h2>
-      <p id="keyCurrentStatus" style="margin-bottom:0">Checking...</p>
-    </div>
-
-    <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="openAdminReport()">👑 View Admin Report</button>
-      <button class="btn btn-secondary" onclick="goHome()">🏠 Back to Home</button>
-    </div>
-  </div>
 
   <div id="nicknameScreen" class="screen">
     <div class="nickname-screen">
@@ -2445,158 +2378,15 @@ const paperConfig = {
 // API KEY MANAGEMENT
 // ==========================================
 
-// ==========================================
-// PASSWORD & KEY MANAGEMENT
-// ==========================================
-
-function simpleEncode(str, pass) {
-  // Simple XOR obfuscation — not cryptographic but prevents casual snooping
-  let out = '';
-  for (let i = 0; i < str.length; i++) {
-    out += String.fromCharCode(str.charCodeAt(i) ^ pass.charCodeAt(i % pass.length));
-  }
-  return btoa(out);
-}
-
-function simpleDecode(encoded, pass) {
-  try {
-    const str = atob(encoded);
-    let out = '';
-    for (let i = 0; i < str.length; i++) {
-      out += String.fromCharCode(str.charCodeAt(i) ^ pass.charCodeAt(i % pass.length));
-    }
-    return out;
-  } catch(e) { return ''; }
-}
-
-function getApiKey() {
-  const encoded = localStorage.getItem('psych_api_key_enc');
-  const passHash = localStorage.getItem('psych_pass_hash');
-  if (!encoded || !passHash) return '';
-  // We can't decode without the password — but for API calls we store a session copy
-  return sessionStorage.getItem('psych_key_session') || '';
-}
-
-function hashPass(pass) {
-  // Simple hash — just enough to verify the password on unlock
-  let h = 0;
-  for (let i = 0; i < pass.length; i++) h = (Math.imul(31, h) + pass.charCodeAt(i)) | 0;
-  return h.toString(36);
-}
-
-function saveApiKey() {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  const pass = document.getElementById('adminPassInput').value.trim();
-  const status = document.getElementById('keyStatus');
-
-  if (!pass || pass.length < 4) {
-    status.textContent = '⚠️ Please set a password of at least 4 characters.';
-    status.className = 'settings-status err';
-    return;
-  }
-  if (!key.startsWith('sk-ant-')) {
-    status.textContent = '⚠️ That doesn\'t look like a valid API key — it should start with sk-ant-';
-    status.className = 'settings-status err';
-    return;
-  }
-
-  // Store encoded key and password hash
-  localStorage.setItem('psych_api_key_enc', simpleEncode(key, pass));
-  localStorage.setItem('psych_pass_hash', hashPass(pass));
-  // Also store in session so it's usable right now
-  sessionStorage.setItem('psych_key_session', key);
-
-  document.getElementById('apiKeyInput').value = '';
-  document.getElementById('adminPassInput').value = '';
-  status.textContent = '✅ Saved! Your daughter will be asked for the password when she first opens the app on a new device.';
-  status.className = 'settings-status ok';
-  updateKeyStatus();
-}
-
-function clearApiKey() {
-  localStorage.removeItem('psych_api_key_enc');
-  localStorage.removeItem('psych_pass_hash');
-  sessionStorage.removeItem('psych_key_session');
-  const status = document.getElementById('keyStatus');
-  status.textContent = '🗑️ All settings cleared.';
-  status.className = 'settings-status err';
-  updateKeyStatus();
-}
-
-function tryUnlock() {
-  const pass = document.getElementById('unlockInput').value.trim();
-  const status = document.getElementById('unlockStatus');
-  const storedHash = localStorage.getItem('psych_pass_hash');
-  const encodedKey = localStorage.getItem('psych_api_key_enc');
-
-  if (!storedHash) {
-    // No password set yet — show secret admin access hint
-    status.textContent = '⚠️ The app hasn\'t been set up yet. Ask a parent to set it up via the admin settings.';
-    status.className = 'settings-status err';
-    return;
-  }
-
-  if (hashPass(pass) !== storedHash) {
-    status.textContent = '❌ Wrong password — try again!';
-    status.className = 'settings-status err';
-    document.getElementById('unlockInput').value = '';
-    return;
-  }
-
-  // Correct — decode and store key in session
-  if (encodedKey) {
-    const key = simpleDecode(encodedKey, pass);
-    sessionStorage.setItem('psych_key_session', key);
-  }
-
-  showScreen('paperScreen');
-}
-
-function updateKeyStatus() {
-  const el = document.getElementById('keyCurrentStatus');
-  if (!el) return;
-  const hasKey = !!localStorage.getItem('psych_api_key_enc');
-  const hasPass = !!localStorage.getItem('psych_pass_hash');
-  if (hasKey && hasPass) {
-    el.innerHTML = `✅ <strong>All set!</strong> Password and API key are saved on this device.<br><br>
-    <span style="font-size:0.8rem;color:var(--text-muted)">Your daughter will be asked for her password when opening on a new device. The API key is encoded and never visible.</span>`;
-    el.style.color = 'var(--green-light)';
-  } else {
-    el.innerHTML = `⚠️ <strong>Not set up yet</strong> — enter a password and API key above to get started.`;
-    el.style.color = 'var(--text-muted)';
-  }
-}
-
-// Secret admin access — tap the header title 5 times quickly
-let secretTaps = 0, secretTimer;
-function secretAdminTap() {
-  secretTaps++;
-  clearTimeout(secretTimer);
-  secretTimer = setTimeout(() => secretTaps = 0, 2000);
-  if (secretTaps >= 5) {
-    secretTaps = 0;
-    document.getElementById('settingsBtn').style.display = 'flex';
-    showScreen('settingsScreen');
-    updateKeyStatus();
-  }
-}
-
 // On app load — decide which screen to show
 (function() {
-  const hasPass = !!localStorage.getItem('psych_pass_hash');
-  const sessionKey = sessionStorage.getItem('psych_key_session');
   const hasNickname = !!localStorage.getItem('psych_nickname');
-  if (!hasPass) {
-    document.getElementById('settingsBtn').style.display = 'flex';
-    showScreen('settingsScreen');
-    updateKeyStatus();
-  } else if (!sessionKey) {
-    showScreen('unlockScreen');
-  } else if (!hasNickname) {
+  if (!hasNickname) {
     showScreen('nicknameScreen');
   }
   // else paperScreen shown by default
 })();
+
 
 
 
@@ -2929,73 +2719,16 @@ function submitShortAnswer() {
   const aiFbBody = document.getElementById('aiFeedbackBody');
   aiFb.classList.add('show');
 
-  const apiKey = getApiKey();
-
-  if (!apiKey) {
-    // No key — show model answer for self-marking
-    aiFbBody.innerHTML = `
-      <p style="margin-bottom:10px">✅ <strong>Compare your answer to the model answer below.</strong> Give yourself a mark out of ${q.marks} — be honest!</p>
-      <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px;line-height:1.7;font-size:0.9rem"><strong>Model answer:</strong><br><br>${q.modelAnswer}</div>
-      <p style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)">💡 Tip: Look for key terms, named studies, and specific details. Each of those is worth marks!</p>
-      <p style="margin-top:8px;font-size:0.8rem;color:var(--text-muted)">🔑 Add an API key in ⚙️ Settings to get live AI tutor feedback.</p>
-    `;
-    state.score += 0.5;
-    state.xp += q.marks * 8;
-    saveState();
-    document.getElementById('btnRow').innerHTML = `<button class="btn btn-primary" onclick="nextQuestion()">Next question →</button>`;
-    return;
-  }
-
-  aiFbBody.innerHTML = `<div class="ai-loading">Thinking... <div class="dot-spin"><span></span><span></span><span></span></div></div>`;
-
-  const prompt = `You are a helpful and encouraging GCSE Psychology tutor. A student has answered this exam question:
-
-QUESTION: ${q.q} [${q.marks} marks]
-
-STUDENT'S ANSWER: ${answer}
-
-MODEL ANSWER FOR REFERENCE: ${q.modelAnswer}
-
-Please give the student:
-1. An estimated mark out of ${q.marks} and a brief reason why
-2. Two specific things they did well (even if the answer is poor, find something to praise)
-3. One or two specific improvements they could make to get more marks
-4. One quick memory tip to help remember this topic
-
-Keep your response friendly, encouraging, and clear. Use simple language. Format with short paragraphs, not bullet points. The student has ADHD so keep it concise and positive.`;
-
-  fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  })
-  .then(r => r.json())
-  .then(data => {
-    const text = data.content?.find(c => c.type === 'text')?.text || 'Could not get feedback right now.';
-    aiFbBody.innerHTML = text.replace(/\n/g, '<br>');
-    state.score += 0.5;
-    state.xp += q.marks * 8;
-    saveState();
-    document.getElementById('btnRow').innerHTML = `<button class="btn btn-primary" onclick="nextQuestion()">Next question →</button>`;
-  })
-  .catch(() => {
-    aiFbBody.innerHTML = `
-      <p style="margin-bottom:10px">✅ <strong>Compare your answer to the model answer below.</strong> Give yourself a mark out of ${q.marks} — be honest!</p>
-      <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px;line-height:1.7;font-size:0.9rem"><strong>Model answer:</strong><br><br>${q.modelAnswer}</div>
-    `;
-    state.score += 0.5;
-    state.xp += q.marks * 8;
-    saveState();
-    document.getElementById('btnRow').innerHTML = `<button class="btn btn-primary" onclick="nextQuestion()">Next question →</button>`;
-  });
+  // Show model answer for self-marking
+  aiFbBody.innerHTML = `
+    <p style="margin-bottom:10px">✅ <strong>Compare your answer to the model answer below.</strong> Give yourself a mark out of ${q.marks} — be honest!</p>
+    <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px;line-height:1.7;font-size:0.9rem"><strong>Model answer:</strong><br><br>${q.modelAnswer}</div>
+    <p style="margin-top:12px;font-size:0.85rem;color:var(--text-muted)">💡 Tip: Look for key terms, named studies, and specific details. Each of those is worth marks!</p>
+  `;
+  state.score += 0.5;
+  state.xp += q.marks * 8;
+  saveState();
+  document.getElementById('btnRow').innerHTML = `<button class="btn btn-primary" onclick="nextQuestion()">Next question →</button>`;
 }
 
 function showFeedback(correct, title, body) {
@@ -3319,68 +3052,7 @@ function buildStaticReport() {
 function generateAiReport() {
   const total = Object.values(state.attempts).reduce((a, b) => a + b, 0);
   if (total === 0) { alert('Complete some revision sessions first!'); return; }
-
-  const apiKey = getApiKey();
-
-  if (!apiKey) {
-    // No key — use smart static report
-    document.getElementById('reportAiBox').innerHTML = buildStaticReport();
-    return;
-  }
-
-  // Key available — call AI for a truly personalised report
-  document.getElementById('reportAiBox').innerHTML = `
-    <div class="ai-loading" style="justify-content:center;padding:12px">
-      Generating your personalised report...
-      <div class="dot-spin"><span></span><span></span><span></span></div>
-    </div>`;
-
-  const topics = paperConfig[state.paper].topics;
-  const activeBank = state.paper === 1 ? questionBank : questionBankP2;
-  const breakdown = topics.map(t => {
-    const tp = state.attempts[t] > 0 ? Math.round(state.correct[t] / state.attempts[t] * 100) : null;
-    return `${activeBank[t].label}: ${tp !== null ? tp + '% accuracy (' + state.correct[t] + '/' + state.attempts[t] + ' correct)' : 'not yet attempted'}`;
-  }).join('\n');
-
-  const prompt = `You are a supportive GCSE Psychology tutor writing a brief progress report for a student who has ADHD.
-
-Here is their revision data for AQA GCSE Psychology ${paperConfig[state.paper].label}:
-${breakdown}
-Total sessions completed: ${state.sessions}
-Overall XP earned: ${state.xp}
-
-Please write a short, warm, and encouraging report (around 150 words) that:
-1. Acknowledges what they've done well specifically
-2. Clearly identifies their one or two weakest areas and gives one concrete, actionable tip for each
-3. Ends with a genuinely motivating sentence
-
-Keep the language simple, positive, and direct. Avoid long paragraphs. This student responds best to short, clear feedback with specific actions they can take.`;
-
-  fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 600,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  })
-  .then(r => r.json())
-  .then(data => {
-    const text = data.content?.find(c => c.type === 'text')?.text;
-    if (text) {
-      document.getElementById('reportAiBox').innerHTML = text.replace(/\n/g, '<br>');
-    } else {
-      document.getElementById('reportAiBox').innerHTML = buildStaticReport();
-    }
-  })
-  .catch(() => {
-    document.getElementById('reportAiBox').innerHTML = buildStaticReport();
-  });
+  document.getElementById('reportAiBox').innerHTML = buildStaticReport();
 }
 
 // ==========================================
@@ -3482,7 +3154,6 @@ saveState = function() {
 
 // Set default active states
 updateHeader();
-updateKeyStatus();
 // Paper screen shows first — topic grid built when paper is selected
 </script>
 </body>
