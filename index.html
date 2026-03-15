@@ -1618,6 +1618,22 @@ async function adminResetPin(nickname) {
   }
 }
 
+async function adminDeleteUser(nickname) {
+  const confirmed = confirm(`⚠️ Delete "${nickname}" completely?\n\nThis will remove all their scores and data from the leaderboard. This cannot be undone.`);
+  if (!confirmed) return;
+  try {
+    await sbFetch(`leaderboard?nickname=eq.${encodeURIComponent(nickname)}`, {
+      method: 'DELETE',
+      prefer: 'return=minimal'
+    });
+    alert(`✅ "${nickname}" has been deleted.`);
+    // Refresh the admin report
+    openAdminReport();
+  } catch(e) {
+    alert('❌ Could not delete user — check your connection.');
+  }
+}
+
 // ==========================================
 // LEADERBOARD SCREEN
 // ==========================================
@@ -1775,7 +1791,7 @@ async function openAdminReport() {
             <div class="admin-col-head">P1 %</div>
             <div class="admin-col-head">P2 %</div>
             <div class="admin-col-head">LAST SEEN</div>
-            <div class="admin-col-head">PIN</div>
+            <div class="admin-col-head">ACTIONS</div>
           </div>`;
 
     rows.forEach(r => {
@@ -1789,7 +1805,10 @@ async function openAdminReport() {
           <div class="admin-stat" style="color:${(r.accuracy_p1||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p1||0}%</div>
           <div class="admin-stat" style="color:${(r.accuracy_p2||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p2||0}%</div>
           <div class="admin-stat" style="font-size:0.72rem;color:var(--text-muted)">${lastSeen}</div>
-          <div class="admin-stat"><button onclick="adminResetPin('${r.nickname.replace(/'/g,"\\'")}'')" style="background:rgba(239,68,68,0.15);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer">Reset PIN</button></div>
+          <div class="admin-stat" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center">
+            <button onclick="adminResetPin('${r.nickname.replace(/'/g,"\\'")}')  " style="background:rgba(239,68,68,0.15);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer">Reset PIN</button>
+            <button onclick="adminDeleteUser('${r.nickname.replace(/'/g,"\\'")}') " style="background:rgba(239,68,68,0.3);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer">🗑️ Delete</button>
+          </div>
         </div>`;
     });
 
