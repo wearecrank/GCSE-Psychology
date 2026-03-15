@@ -1783,31 +1783,31 @@ async function openAdminReport() {
       <div class="settings-panel" style="margin-top:16px">
         <h2>👥 All Students</h2>
         <div style="overflow-x:auto">
-          <div style="display:flex;gap:0;padding:0 0 8px 0;min-width:500px">
-            <div style="flex:1;font-size:0.75rem;color:var(--text-muted);font-weight:700">NICKNAME</div>
-            <div class="admin-col-head">XP</div>
-            <div class="admin-col-head">STREAK</div>
-            <div class="admin-col-head">SESSIONS</div>
-            <div class="admin-col-head">P1 %</div>
-            <div class="admin-col-head">P2 %</div>
-            <div class="admin-col-head">LAST SEEN</div>
-            <div class="admin-col-head">ACTIONS</div>
+          <div style="display:grid;grid-template-columns:1fr 60px 70px 80px 60px 60px 80px 160px;gap:0;padding:0 0 8px 0;min-width:640px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px">
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;padding:4px 8px">NICKNAME</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">XP</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">STREAK</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">SESSIONS</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">P1 %</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">P2 %</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">LAST SEEN</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;text-align:center;padding:4px 4px">ACTIONS</div>
           </div>`;
 
     rows.forEach(r => {
       const lastSeen = r.last_seen ? new Date(r.last_seen).toLocaleDateString('en-GB', {day:'numeric',month:'short'}) : '–';
       html += `
-        <div class="admin-row" style="min-width:500px">
-          <div class="admin-name">${r.nickname}</div>
+        <div class="admin-row" style="min-width:640px;display:grid;grid-template-columns:1fr 60px 70px 80px 60px 60px 80px 160px;align-items:center">
+          <div class="admin-name" style="padding:4px 8px">${r.nickname}</div>
           <div class="admin-stat" style="color:var(--yellow)">${r.xp||0}</div>
           <div class="admin-stat" style="color:var(--teal-light)">${r.best_streak||0}d</div>
           <div class="admin-stat" style="color:var(--purple-light)">${r.sessions||0}</div>
           <div class="admin-stat" style="color:${(r.accuracy_p1||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p1||0}%</div>
           <div class="admin-stat" style="color:${(r.accuracy_p2||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p2||0}%</div>
           <div class="admin-stat" style="font-size:0.72rem;color:var(--text-muted)">${lastSeen}</div>
-          <div class="admin-stat" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center">
-            <button onclick="adminResetPin('${r.nickname.replace(/'/g,"\\'")}')  " style="background:rgba(239,68,68,0.15);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer">Reset PIN</button>
-            <button onclick="adminDeleteUser('${r.nickname.replace(/'/g,"\\'")}') " style="background:rgba(239,68,68,0.3);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer">🗑️ Delete</button>
+          <div style="display:flex;gap:4px;justify-content:center;padding:4px">
+            <button onclick="adminResetPin('${r.nickname.replace(/'/g,"\\'")}') " style="background:rgba(239,68,68,0.15);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.68rem;cursor:pointer;white-space:nowrap">Reset PIN</button>
+            <button onclick="adminDeleteUser('${r.nickname.replace(/'/g,"\\'")}') " style="background:rgba(239,68,68,0.3);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.68rem;cursor:pointer;white-space:nowrap">🗑️ Delete</button>
           </div>
         </div>`;
     });
