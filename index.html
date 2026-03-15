@@ -2986,17 +2986,6 @@ const paperConfig = {
 // ==========================================
 
 // On app load — decide which screen to show
-(function() {
-  const loggedIn   = localStorage.getItem('psych_logged_in');
-  const nickname   = localStorage.getItem('psych_nickname');
-  if (!loggedIn || !nickname) {
-    // Check if they have an existing nickname from before PIN was introduced
-    // If so, send them to register to set a PIN
-    showScreen('registerScreen');
-  }
-  // else paperScreen shown by default
-})();
-
 
 
 
@@ -3785,7 +3774,17 @@ saveState = function() {
 
 // Set default active states
 updateHeader();
-// Paper screen shows first — topic grid built when paper is selected
+
+// Decide which screen to show on load — must run after all functions are defined
+(function() {
+  const loggedIn = localStorage.getItem('psych_logged_in');
+  const nickname = localStorage.getItem('psych_nickname');
+  const pinHash  = localStorage.getItem('psych_pin_hash');
+  if (!loggedIn || !nickname || !pinHash) {
+    showScreen('registerScreen');
+  }
+  // else paperScreen shown by default
+})();
 </script>
 </body>
 </html>
