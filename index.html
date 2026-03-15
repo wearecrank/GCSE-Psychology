@@ -994,7 +994,7 @@
 <div class="container">
   <!-- HEADER -->
   <div class="header">
-    <h1>🧠 Psychology Revision</h1>
+    <h1 onclick="secretAdminTap()" style="cursor:default">🧠 Psychology Revision</h1>
     <p id="headerSubtitle">AQA GCSE · Let's get those marks! 💪</p>
   </div>
 
@@ -1012,25 +1012,59 @@
       <span class="streak-emoji">✅</span>
       <span id="correctTotal">0</span> correct today
     </div>
+    <div class="streak-item" id="paperIndicator" style="display:none;cursor:pointer" onclick="showScreen('paperScreen')" title="Switch paper">
+      <span id="paperIndicatorEmoji">📗</span>
+      <span id="paperIndicatorLabel" style="color:var(--purple-light);font-weight:800">Paper 1</span>
+    </div>
   </div>
 
 
-  <div id="nicknameScreen" class="screen">
+  <!-- SCREEN: REGISTER (new user) -->
+  <div id="registerScreen" class="screen">
     <div class="nickname-screen">
       <div style="font-size:3rem;margin-bottom:16px">🏆</div>
-      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--yellow);margin-bottom:8px">Choose your nickname!</div>
-      <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:28px;max-width:320px;margin-left:auto;margin-right:auto">This is how you'll appear on the leaderboard. Keep it fun — no real names needed!</div>
-      <input
-        class="nickname-input"
-        type="text"
-        id="nicknameInput"
-        placeholder="e.g. PsychStar ⭐"
-        maxlength="20"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter') saveNickname()"
-      />
-      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:20px">Max 20 characters · No real names please!</div>
-      <button class="btn btn-primary" style="min-width:200px" onclick="saveNickname()">🚀 Let's go!</button>
+      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--yellow);margin-bottom:8px">Create your account</div>
+      <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;max-width:320px;margin-left:auto;margin-right:auto">Choose a fun nickname and a 4-digit PIN. If you've used the app before, enter your existing nickname and a new PIN to claim your account!</div>
+      <input class="nickname-input" type="text" id="registerName" placeholder="Nickname e.g. PsychStar ⭐" maxlength="20" autocomplete="off" />
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:16px">Max 20 characters · No real names please!</div>
+      <input class="nickname-input" type="password" id="registerPin" placeholder="4-digit PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onkeydown="if(event.key==='Enter') submitRegister()" />
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:20px">Remember this PIN — you'll need it on new devices</div>
+      <button class="btn btn-primary" style="min-width:200px" onclick="submitRegister()">🚀 Create Account</button>
+      <div style="margin-top:16px;font-size:0.85rem;color:var(--text-muted)">Already have an account? <span style="color:var(--purple-light);text-decoration:underline;cursor:pointer" onclick="showScreen('loginScreen')">Log in here</span></div>
+      <div class="settings-status" id="registerStatus" style="max-width:340px;margin:12px auto 0"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: LOGIN (returning user on new device) -->
+  <div id="loginScreen" class="screen">
+    <div class="nickname-screen">
+      <div style="font-size:3rem;margin-bottom:16px">🔑</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--purple-light);margin-bottom:8px">Welcome back!</div>
+      <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;max-width:320px;margin-left:auto;margin-right:auto">Enter your nickname and PIN to pick up where you left off.</div>
+      <input class="nickname-input" type="text" id="loginName" placeholder="Your nickname" maxlength="20" autocomplete="off" />
+      <div style="margin-bottom:16px"></div>
+      <input class="nickname-input" type="password" id="loginPin" placeholder="4-digit PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onkeydown="if(event.key==='Enter') submitLogin()" />
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:20px"></div>
+      <button class="btn btn-primary" style="min-width:200px" onclick="submitLogin()">✅ Log In</button>
+      <div style="margin-top:16px;font-size:0.85rem;color:var(--text-muted)">New here? <span style="color:var(--yellow);text-decoration:underline;cursor:pointer" onclick="showScreen('registerScreen')">Create an account</span></div>
+      <div class="settings-status" id="loginStatus" style="max-width:340px;margin:12px auto 0"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: CHANGE NAME/PIN -->
+  <div id="nicknameScreen" class="screen">
+    <div class="nickname-screen">
+      <div style="font-size:3rem;margin-bottom:16px">✏️</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--yellow);margin-bottom:8px">Update your details</div>
+      <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;max-width:320px;margin-left:auto;margin-right:auto">Change your nickname. Enter your current PIN to confirm.</div>
+      <input class="nickname-input" type="text" id="nicknameInput" placeholder="New nickname" maxlength="20" autocomplete="off" />
+      <div style="margin-bottom:16px"></div>
+      <input class="nickname-input" type="password" id="changePin" placeholder="Current PIN to confirm" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" onkeydown="if(event.key==='Enter') saveNickname()" />
+      <div style="margin-bottom:20px"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" style="min-width:160px" onclick="saveNickname()">✅ Save Changes</button>
+        <button class="btn btn-secondary" style="min-width:160px" onclick="goHome()">Cancel</button>
+      </div>
       <div class="settings-status" id="nicknameStatus" style="max-width:340px;margin:12px auto 0"></div>
     </div>
   </div>
@@ -1111,8 +1145,11 @@
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div class="section-label" style="margin-bottom:0">📚 Choose a Topic</div>
-      <button class="btn btn-secondary" style="font-size:0.78rem;padding:7px 14px" onclick="showScreen('paperScreen')">🔄 Switch Paper</button>
+      <div>
+        <div class="section-label" style="margin-bottom:2px">📚 Choose a Topic</div>
+        <div id="currentPaperLabel" style="font-size:0.8rem;color:var(--text-muted)">Paper 1 · Memory, Perception, Development, Research</div>
+      </div>
+      <button class="btn btn-secondary" style="font-size:0.82rem;padding:8px 16px;flex-shrink:0" onclick="showScreen('paperScreen')">🔄 Switch Paper</button>
     </div>
     <div class="topic-grid" id="topicGrid">
       <!-- filled dynamically -->
@@ -1170,6 +1207,10 @@
           <div class="stat-number" style="color:var(--pink-light)" id="dash-best">-</div>
           <div class="stat-label">Best topic</div>
         </div>
+      </div>
+      <div style="text-align:center;margin-top:14px;font-size:0.82rem;color:var(--text-muted)">
+        Playing as <strong id="nicknameDisplay" style="color:var(--purple-light)">...</strong>
+        · <span style="text-decoration:underline;cursor:pointer" onclick="changeNickname()">change name</span>
       </div>
     </div>
   </div>
@@ -1327,30 +1368,173 @@ async function sbFetch(path, options = {}) {
 }
 
 // ==========================================
-// NICKNAME
+// AUTH — USERNAME + PIN
 // ==========================================
 
 function getNickname() {
   return localStorage.getItem('psych_nickname') || '';
 }
 
-function saveNickname() {
-  const val = document.getElementById('nicknameInput').value.trim();
-  const status = document.getElementById('nicknameStatus');
-  if (!val || val.length < 2) {
-    status.textContent = '⚠️ Please enter at least 2 characters.';
-    status.className = 'settings-status err';
-    return;
+async function pinHash(pin) {
+  // SHA-256 via Web Crypto — never store raw PINs
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('psych_salt_' + pin));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function submitRegister() {
+  const name = document.getElementById('registerName').value.trim();
+  const pin  = document.getElementById('registerPin').value.trim();
+  const status = document.getElementById('registerStatus');
+
+  if (!name || name.length < 2) {
+    status.textContent = '⚠️ Nickname must be at least 2 characters.';
+    status.className = 'settings-status err'; return;
   }
-  localStorage.setItem('psych_nickname', val);
-  // Create entry in leaderboard if not exists
-  upsertLeaderboard();
+  if (!/^\d{4}$/.test(pin)) {
+    status.textContent = '⚠️ PIN must be exactly 4 digits.';
+    status.className = 'settings-status err'; return;
+  }
+
+  status.textContent = 'Checking...';
+  status.className = 'settings-status';
+
+  try {
+    const existing = await sbFetch(`leaderboard?nickname=eq.${encodeURIComponent(name)}&select=nickname,pin_hash`);
+
+    if (existing && existing.length > 0) {
+      const row = existing[0];
+
+      if (row.pin_hash) {
+        // Nickname taken and already has a PIN — can't claim it
+        status.textContent = '⚠️ That nickname is already taken and has a PIN set. Try a different nickname, or use the Log In screen if it\'s yours.';
+        status.className = 'settings-status err'; return;
+      }
+
+      // Nickname exists but no PIN yet — this is an existing user, let them claim it
+      status.textContent = 'Claiming your existing account...';
+      const hash = await pinHash(pin);
+      localStorage.setItem('psych_nickname', name);
+      localStorage.setItem('psych_pin_hash', hash);
+      localStorage.setItem('psych_logged_in', '1');
+      await upsertLeaderboard(hash);
+      updateNicknameDisplay();
+      showScreen('paperScreen');
+      return;
+    }
+  } catch(e) {}
+
+  // Brand new account
+  status.textContent = 'Creating account...';
+  const hash = await pinHash(pin);
+  localStorage.setItem('psych_nickname', name);
+  localStorage.setItem('psych_pin_hash', hash);
+  localStorage.setItem('psych_logged_in', '1');
+
+  await upsertLeaderboard(hash);
+  updateNicknameDisplay();
   showScreen('paperScreen');
 }
 
-async function upsertLeaderboard() {
+async function submitLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  const pin  = document.getElementById('loginPin').value.trim();
+  const status = document.getElementById('loginStatus');
+
+  if (!name || !pin) {
+    status.textContent = '⚠️ Please enter your nickname and PIN.';
+    status.className = 'settings-status err'; return;
+  }
+
+  status.textContent = 'Checking...';
+  status.className = 'settings-status';
+
+  try {
+    const rows = await sbFetch(`leaderboard?nickname=eq.${encodeURIComponent(name)}&select=*`);
+    if (!rows || rows.length === 0) {
+      status.textContent = '❌ Nickname not found — check the spelling or create an account.';
+      status.className = 'settings-status err'; return;
+    }
+    const row = rows[0];
+    const hash = await pinHash(pin);
+    if (row.pin_hash && row.pin_hash !== hash) {
+      status.textContent = '❌ Wrong PIN — try again!';
+      status.className = 'settings-status err'; return;
+    }
+
+    // PIN correct — restore their data
+    localStorage.setItem('psych_nickname', name);
+    localStorage.setItem('psych_pin_hash', hash);
+    localStorage.setItem('psych_logged_in', '1');
+
+    // Load their scores from Supabase into local state
+    state.xp       = row.xp || 0;
+    state.streak   = row.streak || 0;
+    state.sessions = row.sessions || 0;
+    if (row.topic_scores) {
+      const ts = row.topic_scores;
+      Object.keys(ts).forEach(t => {
+        state.attempts[t] = ts[t].attempts || 0;
+        state.correct[t]  = ts[t].correct  || 0;
+      });
+    }
+    localStorage.setItem('psych_best_streak', row.best_streak || 0);
+    saveState();
+
+    updateNicknameDisplay();
+    showScreen('paperScreen');
+
+  } catch(e) {
+    status.textContent = '⚠️ Could not connect — check your internet and try again.';
+    status.className = 'settings-status err';
+  }
+}
+
+async function saveNickname() {
+  const newName = document.getElementById('nicknameInput').value.trim();
+  const pin     = document.getElementById('changePin').value.trim();
+  const status  = document.getElementById('nicknameStatus');
+
+  if (!newName || newName.length < 2) {
+    status.textContent = '⚠️ Nickname must be at least 2 characters.';
+    status.className = 'settings-status err'; return;
+  }
+  if (!/^\d{4}$/.test(pin)) {
+    status.textContent = '⚠️ Please enter your 4-digit PIN to confirm.';
+    status.className = 'settings-status err'; return;
+  }
+
+  const hash = await pinHash(pin);
+  const storedHash = localStorage.getItem('psych_pin_hash');
+  if (storedHash && hash !== storedHash) {
+    status.textContent = '❌ Wrong PIN — changes not saved.';
+    status.className = 'settings-status err'; return;
+  }
+
+  localStorage.setItem('psych_nickname', newName);
+  await upsertLeaderboard();
+  updateNicknameDisplay();
+  goHome();
+}
+
+function changeNickname() {
+  document.getElementById('nicknameInput').value = getNickname();
+  document.getElementById('changePin').value = '';
+  document.getElementById('nicknameStatus').textContent = '';
+  document.getElementById('nicknameStatus').className = 'settings-status';
+  showScreen('nicknameScreen');
+}
+
+function updateNicknameDisplay() {
+  const el = document.getElementById('nicknameDisplay');
+  if (el) el.textContent = getNickname() || '...';
+}
+
+
+async function upsertLeaderboard(pinHashOverride) {
   const nickname = getNickname();
   if (!nickname) return;
+
+  const hash = pinHashOverride || localStorage.getItem('psych_pin_hash') || undefined;
 
   const p1Topics = ['memory','perception','development','research'];
   const p2Topics = ['social','language','brain','psychproblems'];
@@ -1383,7 +1567,8 @@ async function upsertLeaderboard() {
     correct_p2: p2Correct,
     topic_scores: topicScores,
     last_seen: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
+    ...(hash ? { pin_hash: hash } : {})
   };
 
   try {
@@ -1396,6 +1581,40 @@ async function upsertLeaderboard() {
     localStorage.setItem('psych_best_streak', payload.best_streak);
   } catch(e) {
     console.warn('Leaderboard sync failed:', e);
+  }
+}
+
+// ==========================================
+// ADMIN ACCESS — 5-tap secret on title
+// ==========================================
+
+let secretTaps = 0, secretTimer;
+function secretAdminTap() {
+  secretTaps++;
+  clearTimeout(secretTimer);
+  secretTimer = setTimeout(() => secretTaps = 0, 2000);
+  if (secretTaps >= 5) {
+    secretTaps = 0;
+    openAdminReport();
+  }
+}
+
+// Admin PIN reset — called from admin report UI
+async function adminResetPin(nickname) {
+  const newPin = prompt(`Reset PIN for "${nickname}"\nEnter new 4-digit PIN:`);
+  if (!newPin || !/^\d{4}$/.test(newPin)) {
+    alert('PIN must be exactly 4 digits — no changes made.'); return;
+  }
+  const hash = await pinHash(newPin);
+  try {
+    await sbFetch(`leaderboard?nickname=eq.${encodeURIComponent(nickname)}`, {
+      method: 'PATCH',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ pin_hash: hash })
+    });
+    alert(`✅ PIN reset for "${nickname}". Their new PIN is: ${newPin}`);
+  } catch(e) {
+    alert('❌ Could not reset PIN — check your connection.');
   }
 }
 
@@ -1556,6 +1775,7 @@ async function openAdminReport() {
             <div class="admin-col-head">P1 %</div>
             <div class="admin-col-head">P2 %</div>
             <div class="admin-col-head">LAST SEEN</div>
+            <div class="admin-col-head">PIN</div>
           </div>`;
 
     rows.forEach(r => {
@@ -1569,6 +1789,7 @@ async function openAdminReport() {
           <div class="admin-stat" style="color:${(r.accuracy_p1||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p1||0}%</div>
           <div class="admin-stat" style="color:${(r.accuracy_p2||0)>=70?'var(--green)':'var(--red-light)'}">${r.accuracy_p2||0}%</div>
           <div class="admin-stat" style="font-size:0.72rem;color:var(--text-muted)">${lastSeen}</div>
+          <div class="admin-stat"><button onclick="adminResetPin('${r.nickname.replace(/'/g,"\\'")}'')" style="background:rgba(239,68,68,0.15);border:1px solid var(--red-light);color:var(--red-light);border-radius:8px;padding:4px 8px;font-size:0.7rem;cursor:pointer">Reset PIN</button></div>
         </div>`;
     });
 
@@ -1694,6 +1915,62 @@ const questionBank = {
         explanation: "Long-term memory primarily uses semantic encoding, meaning information is stored based on its meaning rather than its sound or appearance.",
         marks: 1
       }
+      {
+        q: "Which type of long-term memory stores skills and how to do things, such as riding a bike?",
+        options: ["Episodic memory", "Semantic memory", "Procedural memory", "Working memory"],
+        answer: 2,
+        explanation: "Procedural memory stores how to carry out skills and actions. It is often used without conscious thought — you don't think through each step when riding a bike.",
+        marks: 1
+      },
+      {
+        q: "What is meant by the term 'retrieval' in the context of memory?",
+        options: ["Converting information into a form the brain can store", "Maintaining information in memory over time", "Bringing stored information back into conscious awareness", "Organising information into meaningful chunks"],
+        answer: 2,
+        explanation: "Retrieval is the final stage of memory — accessing and bringing information back out of storage so it can be used.",
+        marks: 1
+      },
+      {
+        q: "Which of the following is an example of proactive interference?",
+        options: ["Forgetting your old PIN because you keep entering your new one", "Forgetting a new phone number because you keep thinking of your old one", "Being unable to remember a word you have just learned", "Failing to store information because you were distracted"],
+        answer: 1,
+        explanation: "Proactive interference is when OLD memories interfere with NEW ones. Thinking of your old phone number when trying to recall your new one is a classic example.",
+        marks: 1
+      },
+      {
+        q: "In Baddeley's working memory model, which component deals with visual and spatial information?",
+        options: ["The phonological loop", "The central executive", "The episodic buffer", "The visuospatial sketchpad"],
+        answer: 3,
+        explanation: "The visuospatial sketchpad processes and stores visual and spatial information — things like mental maps or imagining what an object looks like.",
+        marks: 1
+      },
+      {
+        q: "Which of the following best describes 'state-dependent memory'?",
+        options: ["Memory is better when tested in the same physical location as learning", "Memory is better when tested in the same emotional or physiological state as when learning occurred", "Memory improves when information is rehearsed repeatedly", "Memory depends on how meaningful the information is"],
+        answer: 1,
+        explanation: "State-dependent memory means recall is better when your internal state (e.g. mood, alertness, or even drug state) matches the state you were in when you first learned the information.",
+        marks: 1
+      },
+      {
+        q: "What does the term 'chunking' mean in relation to memory?",
+        options: ["Forgetting information in small pieces over time", "Grouping individual pieces of information together into meaningful units to increase memory capacity", "Separating memories into different memory stores", "Encoding information using sound rather than meaning"],
+        answer: 1,
+        explanation: "Chunking is a technique where you group individual items into larger meaningful units. For example, remembering a phone number as chunks (07700 · 900 · 123) rather than 11 separate digits.",
+        marks: 1
+      },
+      {
+        q: "Bartlett (1932) asked participants to recall a Native American folk tale called 'The War of the Ghosts'. What did he find?",
+        options: ["Participants recalled the story perfectly after one week", "Participants changed the story to fit their own cultural expectations", "Participants remembered later parts of the story better than earlier parts", "Participants forgot the story entirely within two weeks"],
+        answer: 1,
+        explanation: "Bartlett found that participants changed unfamiliar details of the story to make it fit their own cultural knowledge and expectations. This showed that memory is reconstructive rather than a perfect recording.",
+        marks: 1
+      },
+      {
+        q: "Which term describes the finding that people tend to remember items from the beginning of a list better than items in the middle?",
+        options: ["The recency effect", "The primacy effect", "The serial position effect", "The encoding effect"],
+        answer: 1,
+        explanation: "The primacy effect refers to better recall of items at the start of a list — these have had more time to be rehearsed into long-term memory.",
+        marks: 1
+      },
     ],
     flashcards: [
       { front: "What are the three types of long-term memory identified by Tulving?", back: "Episodic (personal events), Semantic (general knowledge/facts), and Procedural (skills and actions)" },
@@ -1701,6 +1978,14 @@ const questionBank = {
       { front: "What is a 'leading question' and why does it matter in psychology?", back: "A question phrased in a way that suggests a desired answer. Loftus & Palmer showed they can alter eyewitness memory and lead to false recall." },
       { front: "What is the difference between recall and recognition?", back: "Recall = retrieving information from memory without cues (e.g. an essay). Recognition = identifying something you've seen before (e.g. multiple choice)." },
       { front: "What did Baddeley's working memory model propose?", back: "That short-term memory is not a single store, but a system with several parts: the central executive, phonological loop, visuospatial sketchpad, and episodic buffer." },
+      { front: "What is proactive interference?", back: "When an older memory interferes with the recall of a newer memory. E.g. remembering your old password stops you recalling your new one." },
+      { front: "What is retroactive interference?", back: "When a newer memory interferes with the recall of an older memory. E.g. learning a new route home makes you forget the old one." },
+      { front: "What did Bartlett's 'War of the Ghosts' study show about memory?", back: "That memory is reconstructive — participants changed unfamiliar details to fit their own cultural expectations, showing memory is not a perfect recording." },
+      { front: "What is the difference between short-term and long-term memory in terms of duration?", back: "STM lasts around 18–30 seconds without rehearsal. LTM can last a lifetime." },
+      { front: "What is the capacity of short-term memory according to Miller (1956)?", back: "7 plus or minus 2 items (i.e. between 5 and 9 chunks of information)." },
+      { front: "What is encoding?", back: "The process of converting information into a format that can be stored in memory. LTM mainly uses semantic encoding (by meaning)." },
+      { front: "What is the primacy effect?", back: "The tendency to remember items from the beginning of a list better — they've had more time to be rehearsed into long-term memory." },
+      { front: "What is the recency effect?", back: "The tendency to remember items from the end of a list better — they are still in short-term memory at the time of recall." },
     ],
     shortanswer: [
       {
@@ -1717,13 +2002,39 @@ const questionBank = {
         q: "Describe Loftus and Palmer's (1974) study into eyewitness testimony. Include the aim, procedure, and one finding.",
         marks: 4,
         modelAnswer: "Aim: To investigate whether the wording of a question affects people's memory of a car accident. Procedure: Participants watched a video of a car crash and were asked 'How fast were the cars going when they _____ each other?' with different verbs (hit, smashed, collided, bumped, contacted). Finding: Participants given 'smashed' estimated the highest speed, showing that leading questions can distort memory."
-      }
+      },
+      {
+        q: "Outline the multi-store model of memory.",
+        marks: 4,
+        modelAnswer: "The multi-store model (Atkinson and Shiffrin, 1968) proposes that memory consists of three stores. Information first enters the sensory register, which holds it briefly. If attention is paid, it moves to short-term memory (capacity 7±2 items, duration ~30 seconds). Through rehearsal, information can pass to long-term memory, which has unlimited capacity and duration."
+      },
+      {
+        q: "Explain one difference between episodic memory and semantic memory.",
+        marks: 2,
+        modelAnswer: "Episodic memory stores personal experiences tied to a specific time and place (e.g. your last birthday), whereas semantic memory stores general knowledge and facts that are not tied to a personal experience (e.g. knowing that the capital of France is Paris)."
+      },
+      {
+        q: "Explain why the results of a study using self-report to measure memory ability might not be valid.",
+        marks: 2,
+        modelAnswer: "Self-report relies on participants honestly and accurately reporting their own memory. Participants may exaggerate or underestimate their ability, or may not be aware of how good or bad their memory actually is. This means the data may not truly reflect their memory performance."
+      },
+      {
+        q: "Describe one strength and one weakness of Bartlett's 'War of the Ghosts' study.",
+        marks: 4,
+        modelAnswer: "Strength: The study used a real story, giving it ecological validity as it reflects how memory works in everyday life when recalling meaningful material. Weakness: The story was unusual and culturally unfamiliar to British participants, which may have made it harder to remember than typical everyday material, limiting how generalisable the findings are."
+      },
     ],
     blankfill: [
       { sentence: "The _____ model of memory was proposed by Atkinson and Shiffrin and includes three memory stores.", answer: "multi-store", options: ["working memory", "multi-store", "dual coding", "levels of processing"] },
       { sentence: "Short-term memory has a capacity of approximately _____ items.", answer: "7 (+/- 2)", options: ["3", "7 (+/- 2)", "12", "unlimited"] },
       { sentence: "Godden and Baddeley's study demonstrated _____ memory, where recall is better when the environment matches where you learnt.", answer: "context-dependent", options: ["state-dependent", "context-dependent", "procedural", "episodic"] },
       { sentence: "_____ interference happens when old memories disrupt the recall of newer ones.", answer: "Proactive", options: ["Retroactive", "Proactive", "Semantic", "Encoding"] },
+      { sentence: "In Baddeley's working memory model, the _____ is responsible for controlling attention and coordinating the other components.", answer: "central executive", options: ["phonological loop", "central executive", "episodic buffer", "visuospatial sketchpad"] },
+      { sentence: "The three stages of memory are encoding, _____, and retrieval.", answer: "storage", options: ["rehearsal", "storage", "processing", "recognition"] },
+      { sentence: "Tulving called personal memories of life events _____ memory.", answer: "episodic", options: ["semantic", "procedural", "episodic", "working"] },
+      { sentence: "When information is lost from short-term memory due to new information pushing it out, this is called _____.", answer: "displacement", options: ["decay", "displacement", "interference", "repression"] },
+      { sentence: "Bartlett described memory as _____, meaning we reconstruct memories rather than play them back exactly.", answer: "reconstructive", options: ["reconstructive", "procedural", "photographic", "sequential"] },
+      { sentence: "The _____ effect explains why we remember the last items on a list — they are still in short-term memory.", answer: "recency", options: ["primacy", "recency", "serial", "spacing"] },
     ]
   },
 
@@ -1812,6 +2123,10 @@ const questionBank = {
       { sentence: "Gregory argued that perception involves making a _____, based on stored knowledge and expectations.", answer: "hypothesis", options: ["decision", "hypothesis", "reflex", "schema"] },
       { sentence: "_____ is where the brain perceives edges or shapes that are not actually present in the stimulus.", answer: "Fiction", options: ["Distortion", "Fiction", "Ambiguity", "Illusion"] },
       { sentence: "The ability to use both eyes together to judge depth is called _____ vision.", answer: "binocular", options: ["monocular", "binocular", "peripheral", "depth"] },
+      { sentence: "_____ depth cues only require one eye to work, such as relative size and linear perspective.", answer: "Monocular", options: ["Binocular", "Monocular", "Retinal", "Convergence"] },
+      { sentence: "When we perceive something in a particular way because of past experience, this is known as _____.", answer: "perceptual set", options: ["perceptual set", "figure-ground", "depth perception", "constancy"] },
+      { sentence: "The _____ triangle is an example of a fictional visual illusion where we see a shape that is not really there.", answer: "Kanizsa", options: ["Müller-Lyer", "Kanizsa", "Necker", "Ponzo"] },
+      { sentence: "Closer objects appear _____ in our visual field — this is the height in plane depth cue.", answer: "lower", options: ["higher", "lower", "larger", "brighter"] },
     ]
   },
 
@@ -1874,6 +2189,48 @@ const questionBank = {
         answer: 2,
         explanation: "Willingham's cognitive model of learning suggests that memory, attention, and thinking are all interconnected. Information only moves from working memory to long-term memory when it is thought about deeply.",
         marks: 1
+      },
+      {
+        q: "What is meant by 'conservation' in Piaget's theory?",
+        options: ["The ability to form strong attachments to caregivers", "Understanding that the amount of something stays the same even if its appearance changes", "The process of storing new information into long-term memory", "Being able to see things from another person's point of view"],
+        answer: 1,
+        explanation: "Conservation is understanding that quantity stays the same even when appearance changes — e.g. water poured into a taller, thinner glass is still the same amount. Piaget found pre-operational children struggle with this.",
+        marks: 1
+      },
+      {
+        q: "According to Vygotsky, what is the role of 'scaffolding' in learning?",
+        options: ["Giving children rewards to motivate their learning", "Providing structured support that is gradually removed as the child becomes more capable", "Testing children regularly to track progress", "Matching teaching to a child's fixed learning style"],
+        answer: 1,
+        explanation: "Scaffolding (a term developed by Wood, Bruner and Ross based on Vygotsky's ideas) involves a more knowledgeable person providing temporary support. As the child's ability grows, the support is gradually withdrawn.",
+        marks: 1
+      },
+      {
+        q: "Which of the following best describes Bowlby's concept of monotropy?",
+        options: ["Children form many equal attachments at the same time", "Children have one primary attachment that is more important than all others", "Attachment only forms after 12 months", "Fathers are more important than mothers in early attachment"],
+        answer: 1,
+        explanation: "Bowlby proposed monotropy — the idea that infants form one primary attachment that is qualitatively different and more important than other attachments. He believed this bond formed the template for all future relationships.",
+        marks: 1
+      },
+      {
+        q: "McGarrigle and Donaldson's 'Naughty Teddy' study challenged Piaget by showing that:",
+        options: ["Children could not conserve number at any age", "When conservation tasks were made more natural and child-friendly, younger children could succeed", "Egocentrism persists into adulthood", "Children learn conservation through formal teaching"],
+        answer: 1,
+        explanation: "McGarrigle and Donaldson found that when a 'naughty teddy' accidentally spread out the counters (rather than the experimenter deliberately doing it), children as young as 4–5 could conserve number. This suggested Piaget's tasks were confusing, not that children truly lacked the ability.",
+        marks: 1
+      },
+      {
+        q: "In Piaget's theory, what happens when a child experiences 'disequilibrium'?",
+        options: ["The child refuses to learn new information", "The child is motivated to learn because existing schemas cannot explain new experiences", "The child reverts to an earlier stage of development", "The child becomes distressed and needs adult support"],
+        answer: 1,
+        explanation: "Disequilibrium is a state of mental imbalance triggered when new information doesn't fit existing schemas. Piaget believed this motivates children to learn — either by assimilating the new information or accommodating their schemas.",
+        marks: 1
+      },
+      {
+        q: "Which theorist emphasised the importance of the social and cultural environment in children's learning?",
+        options: ["Piaget", "Dweck", "Willingham", "Vygotsky"],
+        answer: 3,
+        explanation: "Vygotsky believed that cognitive development is fundamentally shaped by social interaction and the cultural tools (like language) that children are exposed to. This contrasts with Piaget who saw the child as a lone explorer.",
+        marks: 1
       }
     ],
     flashcards: [
@@ -1882,6 +2239,13 @@ const questionBank = {
       { front: "What did Bowlby propose about attachment and development?", back: "Bowlby's theory proposes that children have an innate need to form a close attachment to a caregiver. He argued that disruption to this bond in the early years can have lasting effects on emotional development." },
       { front: "What is 'object permanence' and when does it develop?", back: "Object permanence is the understanding that objects continue to exist when out of sight. Piaget suggested this develops around 8 months during the sensorimotor stage." },
       { front: "What is Dweck's growth mindset theory?", back: "Dweck distinguished between a fixed mindset (believing ability is set) and a growth mindset (believing ability can grow with effort). Children with a growth mindset tend to be more resilient and achieve more." },
+      { front: "What is the zone of proximal development (ZPD)?", back: "Vygotsky's term for the gap between what a child can do independently and what they can achieve with guidance from a more knowledgeable person." },
+      { front: "What is 'conservation' in Piaget's theory?", back: "Understanding that the quantity of something remains the same even if its appearance changes — e.g. water in a tall thin glass is still the same amount as in a short wide glass." },
+      { front: "What is 'egocentrism' in Piaget's theory?", back: "The inability of pre-operational children (2–7 years) to see the world from another person's perspective. Tested by Piaget's three mountains task." },
+      { front: "What did McGarrigle and Donaldson's 'Naughty Teddy' study show?", back: "When conservation tasks were made more natural and less like deliberate tricks, younger children succeeded — suggesting Piaget underestimated children's abilities." },
+      { front: "What is monotropy according to Bowlby?", back: "The idea that infants form one special primary attachment bond that is more important than all others. This bond acts as a template for future relationships." },
+      { front: "What is scaffolding in the context of learning?", back: "Temporary support provided by a more knowledgeable person that helps a child achieve something within their ZPD. The support is gradually removed as the child's ability develops." },
+      { front: "What is the difference between a fixed mindset and a growth mindset?", back: "Fixed mindset: believing intelligence and ability are innate and cannot change. Growth mindset: believing ability can be developed through effort, practice and learning from mistakes." },
     ],
     shortanswer: [
       {
@@ -1893,13 +2257,32 @@ const questionBank = {
         q: "Explain one strength and one limitation of Piaget's theory of cognitive development.",
         marks: 4,
         modelAnswer: "Strength: Piaget's theory has had a huge influence on education. His ideas about children needing to be 'ready' to learn certain concepts has shaped how teachers approach the curriculum, making it more developmentally appropriate. Limitation: Research by McGarrigle and Donaldson (1974) found that children could pass conservation tasks at younger ages when the tasks were made more child-friendly. This suggests Piaget may have underestimated children's abilities because his tasks were artificial and confusing."
-      }
+      },
+      {
+        q: "Describe Vygotsky's concept of the zone of proximal development (ZPD) and explain how it differs from Piaget's approach to learning.",
+        marks: 4,
+        modelAnswer: "The ZPD is the gap between what a child can do on their own and what they can achieve with the help of a more knowledgeable person (e.g. a teacher or parent). Vygotsky argued that learning happens most effectively within this zone, with support gradually removed as the child's ability grows. This differs from Piaget, who saw children as independent learners who construct knowledge through personal exploration, without emphasising the role of social interaction."
+      },
+      {
+        q: "A teacher notices that some children in her class believe they are 'just not good at maths' and give up when work is difficult. Using Dweck's theory, explain what the teacher could do to help.",
+        marks: 4,
+        modelAnswer: "According to Dweck, these children have a fixed mindset — they believe their ability is set and cannot change. The teacher could help by praising effort and strategies rather than natural ability ('You worked really hard on that') to develop a growth mindset. She could also encourage children to see mistakes as learning opportunities and model how challenges can be overcome with persistence. Research shows that children who develop a growth mindset tend to achieve more over time."
+      },
+      {
+        q: "Outline what is meant by 'attachment' and explain why Bowlby believed it was important for development.",
+        marks: 3,
+        modelAnswer: "Attachment is a strong emotional bond formed between an infant and their caregiver in the early years of life. Bowlby believed this bond was crucial because it provides the infant with a safe base from which to explore the world. He argued that the quality of this first attachment becomes an internal working model — a template that shapes the child's expectations of all future relationships. Disruption to early attachment, Bowlby suggested, could lead to lasting emotional and social difficulties."
+      },
     ],
     blankfill: [
       { sentence: "Piaget called the process of changing an existing mental framework to fit new information '_______________'.", answer: "accommodation", options: ["assimilation", "accommodation", "equilibration", "schema"] },
       { sentence: "A child who cannot see the world from another person's point of view is described as _______________.", answer: "egocentric", options: ["concrete", "egocentric", "logical", "abstract"] },
       { sentence: "The part of the brain responsible for higher thinking and decision making is the _______________.", answer: "cortex", options: ["cerebellum", "brain stem", "cortex", "thalamus"] },
       { sentence: "Dweck's _______________ mindset describes someone who believes intelligence can grow with effort.", answer: "growth", options: ["fixed", "growth", "positive", "open"] },
+      { sentence: "Piaget's _____ stage (ages 2–7) is when children are egocentric and cannot yet think logically.", answer: "pre-operational", options: ["sensorimotor", "pre-operational", "concrete operational", "formal operational"] },
+      { sentence: "According to Bowlby, the _____ period for forming a primary attachment is the first few years of life.", answer: "critical", options: ["sensitive", "critical", "optimal", "developmental"] },
+      { sentence: "Vygotsky introduced the idea of the _____, the gap between what a child can do alone and what they can do with guidance.", answer: "zone of proximal development", options: ["zone of proximal development", "scaffolding zone", "cognitive gap", "learning window"] },
+      { sentence: "In Piaget's conservation task, pre-operational children say the taller glass has more liquid because they focus on one feature — this is called _____.", answer: "centration", options: ["egocentrism", "centration", "object permanence", "assimilation"] },
     ]
   },
 
@@ -1962,6 +2345,55 @@ const questionBank = {
         answer: 1,
         explanation: "Reliability refers to the consistency of a measure. If a study is repeated under the same conditions and gets similar results, it is considered reliable.",
         marks: 1
+      },
+      {
+        q: "What is a 'directional hypothesis'?",
+        options: ["A hypothesis that predicts there will be a difference but does not say which direction", "A hypothesis that predicts the direction of the difference or relationship between variables", "A hypothesis used only in correlational studies", "A hypothesis that is proven true after the study"],
+        answer: 1,
+        explanation: "A directional (or one-tailed) hypothesis states not just that there will be a difference, but in which direction — e.g. 'Group A will score higher than Group B.'",
+        marks: 1
+      },
+      {
+        q: "What is a 'pilot study'?",
+        options: ["A study conducted by trainee researchers", "A small-scale trial run of the study before the main investigation", "A study published in a science journal", "A study with no hypothesis"],
+        answer: 1,
+        explanation: "A pilot study is a small-scale rehearsal of the main study. It helps identify any problems with the procedure, materials, or instructions before the full study is carried out.",
+        marks: 1
+      },
+      {
+        q: "Which sampling method involves selecting every nth person from a list?",
+        options: ["Random sampling", "Opportunity sampling", "Systematic sampling", "Stratified sampling"],
+        answer: 2,
+        explanation: "Systematic sampling involves taking every nth person (e.g. every 5th name) from a list. It is more structured than opportunity sampling but not as truly random as a lottery method.",
+        marks: 1
+      },
+      {
+        q: "What does 'ecological validity' mean?",
+        options: ["How well a study can be replicated by other researchers", "How well a study's findings can be applied to real-world settings outside the lab", "Whether a study has been approved by an ethics committee", "Whether a study uses a large enough sample"],
+        answer: 1,
+        explanation: "Ecological validity refers to how well a study reflects real life. Lab experiments often have low ecological validity because the artificial setting may not represent how people behave in everyday situations.",
+        marks: 1
+      },
+      {
+        q: "In a repeated measures design, the same participants take part in all conditions. What is one disadvantage of this?",
+        options: ["It requires twice as many participants", "Participants may perform better in the second condition because of practice (order effects)", "Results cannot be analysed statistically", "The independent variable cannot be controlled"],
+        answer: 1,
+        explanation: "Order effects occur when taking part in one condition affects performance in another — e.g. participants may improve due to practice, or get tired or bored. Counterbalancing can help control this.",
+        marks: 1
+      },
+      {
+        q: "A researcher finds a positive correlation between hours of sleep and exam scores. What does this mean?",
+        options: ["Less sleep causes lower exam scores", "As hours of sleep increase, exam scores also tend to increase", "Hours of sleep and exam scores are unrelated", "More sleep causes higher exam scores"],
+        answer: 1,
+        explanation: "A positive correlation means both variables tend to increase together. However, correlation does not prove causation — a third variable may explain the relationship.",
+        marks: 1
+      },
+      {
+        q: "What is the purpose of a control group in an experiment?",
+        options: ["To provide a baseline for comparison with the experimental group", "To control all variables in the study", "To test the hypothesis before the main study", "To ensure participants give honest answers"],
+        answer: 0,
+        explanation: "A control group does not receive the experimental treatment. It provides a baseline — a comparison point — so researchers can see whether the independent variable actually caused any change.",
+        marks: 1
       }
     ],
     flashcards: [
@@ -1970,6 +2402,13 @@ const questionBank = {
       { front: "What is the difference between a laboratory and a field experiment?", back: "Lab: controlled environment, high internal validity, lower ecological validity. Field: natural setting, higher ecological validity, less control over variables." },
       { front: "What is a 'confounding variable'?", back: "A variable that varies along with the independent variable and may cause the change in the dependent variable instead. It makes it difficult to establish cause and effect." },
       { front: "What is the difference between qualitative and quantitative data?", back: "Quantitative data is numerical (e.g. reaction times, scores). Qualitative data is descriptive and in words (e.g. interview responses). Both have strengths and weaknesses." },
+      { front: "What is a directional hypothesis?", back: "A hypothesis that predicts the direction of any difference or relationship — e.g. 'Group A will score higher than Group B.' Also called a one-tailed hypothesis." },
+      { front: "What is a pilot study and why is it useful?", back: "A small-scale trial run of the main study. It helps identify problems with the design, instructions or materials before the full investigation is carried out." },
+      { front: "What is ecological validity?", back: "The extent to which a study's findings can be generalised to real-world settings. Lab experiments often have low ecological validity because they are artificial." },
+      { front: "What are order effects and how can they be controlled?", back: "Order effects occur in repeated measures designs when taking part in one condition affects the other (e.g. practice or fatigue). They can be controlled by counterbalancing — half the participants do condition A first, the other half do B first." },
+      { front: "What is the difference between random and opportunity sampling?", back: "Random sampling: every member of the target population has an equal chance of being selected (unbiased). Opportunity sampling: selecting whoever is available — quick and convenient but often biased." },
+      { front: "What does a positive correlation mean?", back: "As one variable increases, the other also increases. Important: correlation does not prove causation — a third variable could explain both." },
+      { front: "What is a control group?", back: "A group in an experiment that does not receive the independent variable treatment. It provides a baseline for comparison with the experimental group." },
     ],
     shortanswer: [
       {
@@ -1981,13 +2420,34 @@ const questionBank = {
         q: "Explain one advantage and one disadvantage of using a questionnaire to collect data in psychological research.",
         marks: 4,
         modelAnswer: "Advantage: Questionnaires can be distributed to large numbers of people quickly and cheaply, producing quantitative data that is easy to analyse statistically. This means findings are more likely to be representative of the wider population. Disadvantage: Participants may not answer honestly — this is called social desirability bias. They may give answers they think are expected rather than their true feelings, which reduces the validity of the data."
-      }
+      },
+      {
+        q: "Explain what is meant by 'informed consent' and why it is important in psychological research.",
+        marks: 3,
+        modelAnswer: "Informed consent means that participants are given enough information about the study — its aims, what they will be asked to do, and any potential risks — before agreeing to take part. It is important because it respects participants' autonomy and ensures they are not deceived into participating in something they would not have chosen. Without it, participants may feel manipulated, which is unethical."
+      },
+      {
+        q: "A researcher uses an independent groups design to test whether caffeine improves reaction time. Explain one advantage and one disadvantage of this design.",
+        marks: 4,
+        modelAnswer: "Advantage: Because different participants are used in each condition, there are no order effects — participants cannot improve through practice or become fatigued from doing both conditions. Disadvantage: Individual differences between participants in different groups may confound results. For example, one group may naturally have faster reaction times than the other, making it harder to conclude that caffeine caused any difference. This can be minimised by randomly allocating participants to conditions."
+      },
+      {
+        q: "What is a correlational study? Give one strength and one limitation.",
+        marks: 4,
+        modelAnswer: "A correlational study examines the relationship between two variables without manipulating either one. Strength: It can be used to study variables that would be unethical or impossible to manipulate experimentally (e.g. the relationship between stress levels and illness). Limitation: Correlation does not establish cause and effect. A third variable may be responsible for both, meaning we cannot conclude that one variable causes changes in the other."
+      },
     ],
     blankfill: [
       { sentence: "The variable that a researcher deliberately changes in an experiment is called the _______________.", answer: "independent variable", options: ["dependent variable", "independent variable", "confounding variable", "extraneous variable"] },
       { sentence: "When participants are randomly allocated to conditions, this helps control for _______________differences.", answer: "participant", options: ["environmental", "participant", "researcher", "demand characteristic"] },
       { sentence: "Telling participants the true purpose of a study at the end is called a _______________.", answer: "debrief", options: ["consent form", "debrief", "hypothesis", "pilot study"] },
       { sentence: "A study that produces rich, detailed, descriptive data is said to have _______________ data.", answer: "qualitative", options: ["quantitative", "qualitative", "primary", "secondary"] },
+      { sentence: "A _____ hypothesis predicts the direction of an expected difference, e.g. Group A will score higher than Group B.", answer: "directional", options: ["null", "directional", "non-directional", "experimental"] },
+      { sentence: "A small-scale trial run of a study carried out before the main investigation is called a _____ study.", answer: "pilot", options: ["pilot", "case", "control", "field"] },
+      { sentence: "The extent to which findings can be applied to real-world settings is called _____ validity.", answer: "ecological", options: ["ecological", "internal", "face", "construct"] },
+      { sentence: "In a _____ measures design, the same participants take part in all conditions.", answer: "repeated", options: ["independent", "repeated", "matched", "random"] },
+      { sentence: "A _____ correlation means both variables increase together.", answer: "positive", options: ["negative", "positive", "zero", "inverse"] },
+      { sentence: "The group in an experiment that does not receive the treatment is called the _____ group.", answer: "control", options: ["experimental", "control", "independent", "matched"] },
     ]
   }
 };
@@ -2059,6 +2519,34 @@ const questionBankP2 = {
         answer: 1,
         explanation: "Zimbardo's study showed that otherwise normal people can behave in extreme ways when placed in powerful social roles. Guards became abusive and prisoners became submissive within days.",
         marks: 1
+      },
+      {
+        q: "What is 'bystander effect' in social psychology?",
+        options: ["The tendency to conform when in a large crowd", "The finding that people are less likely to help in an emergency when others are present", "Increased effort when working in a large group", "Becoming more aggressive in a crowd"],
+        answer: 1,
+        explanation: "The bystander effect (Latané and Darley) is the finding that people are less likely to offer help in an emergency when other bystanders are present, due to diffusion of responsibility.",
+        marks: 1
+      },
+      {
+        q: "Which of the following best describes 'identification' as a type of conformity?",
+        options: ["Going along with the group publicly without private belief change", "Conforming because you genuinely believe the group is right", "Changing your behaviour to be like someone you admire, even if not in their presence", "Refusing to go along with the majority"],
+        answer: 2,
+        explanation: "Identification is conforming to the views or behaviours of a group because you want to be associated with them — you identify with the group. The change is more than compliance but less deep-rooted than internalisation.",
+        marks: 1
+      },
+      {
+        q: "In Milgram's variations, which condition produced the lowest level of obedience?",
+        options: ["The learner was in a different room", "The experimenter gave instructions by phone", "The study took place at Yale University", "A second experimenter was present"],
+        answer: 1,
+        explanation: "When the experimenter gave instructions by phone rather than in person, obedience dropped from 65% to around 20%. Physical presence of the authority figure is an important factor in obedience.",
+        marks: 1
+      },
+      {
+        q: "What did Moscovici's (1969) blue-green slide study demonstrate?",
+        options: ["Majorities always override minority views", "A consistent minority can influence the majority's judgements over time", "People are more obedient to authority than peers", "Conformity always involves compliance"],
+        answer: 1,
+        explanation: "Moscovici found that when a minority consistently called blue slides 'green', they influenced some of the majority to also report green. Consistency is key to minority influence — it signals confidence and commitment.",
+        marks: 1
       }
     ],
     flashcards: [
@@ -2067,24 +2555,39 @@ const questionBankP2 = {
       { front: "What is meant by 'social loafing'?", back: "Social loafing is the tendency for people to put in less effort when working as part of a group than when working alone, because individual effort is less visible." },
       { front: "What is 'conformity' and what are the two main types?", back: "Conformity is changing your behaviour or beliefs due to real or imagined group pressure. Types: compliance (public agreement only) and internalisation (genuine private belief change)." },
       { front: "What did Asch's line study show about factors affecting conformity?", back: "Conformity increased with group size (up to 3 people), decreased when participants wrote answers privately, and decreased when one other person also gave the correct answer (a 'dissenter')." },
+      { front: "What is the bystander effect?", back: "The finding that people are less likely to help in an emergency when other bystanders are present. Caused by diffusion of responsibility — each person assumes someone else will help." },
+      { front: "What is the difference between obedience and conformity?", back: "Obedience involves following the direct instructions of an authority figure. Conformity involves changing behaviour in response to social pressure from peers, without a direct order." },
+      { front: "What factors increase minority influence according to Moscovici?", back: "Consistency (always giving the same message), commitment (showing dedication to the cause), and flexibility (being willing to compromise on some points without changing the core message)." },
+      { front: "What is the 'autonomous state' in Milgram's theory?", back: "When a person feels personally responsible for their actions and acts according to their own conscience. This is the opposite of the agentic state and is linked to lower obedience." },
+      { front: "What ethical issues arose from Milgram's study?", back: "Deception (participants were told it was a memory study), lack of right to withdraw (participants were pressured to continue), and psychological harm (participants showed high levels of stress)." },
     ],
     shortanswer: [
       {
         q: "Describe and evaluate Milgram's study into obedience. [9 marks]",
         marks: 9,
-        modelAnswer: "Aim: To investigate how far ordinary people would go in obeying an authority figure, even if it meant harming someone. Procedure: 40 male participants were recruited via newspaper advert. They were told they were 'teachers' and had to give electric shocks to a 'learner' (a confederate) every time they gave a wrong answer. The shocks went from 15V to 450V in 15V steps. An experimenter in a grey coat instructed participants to continue if they hesitated. Results: 65% of participants gave the maximum 450V shock. All gave shocks up to 300V. Evaluation: Strength — the study has high historical significance and led to major changes in how we understand obedience. It was replicated in different countries with similar results. Limitation — there are serious ethical issues: participants were deceived about the true nature of the study and were psychologically harmed (high levels of stress). The sample was also limited to males from one culture, so we cannot generalise widely."
+        modelAnswer: "Aim: To investigate how far ordinary people would go in obeying an authority figure, even if it meant harming someone. Procedure: 40 male participants were recruited via newspaper advert. They were told they were 'teachers' and had to give electric shocks to a 'learner' (a confederate) every time they gave a wrong answer. The shocks went from 15V to 450V in 15V steps. An experimenter in a grey coat instructed participants to continue if they hesitated. Results: 65% of participants gave the maximum 450V shock. All gave shocks up to 300V. Evaluation: Strength — the study has high historical significance and led to major changes in how we understand obedience. It was replicated in different countries with similar results. Limitation — there are serious ethical issues: participants were deceived about the true nature of the study and were psychologically harmed. The sample was also limited to males from one culture, so we cannot generalise widely."
       },
       {
         q: "Explain two factors that affect whether someone obeys an authority figure.",
         marks: 4,
         modelAnswer: "Proximity to the victim: When the victim was in the same room as the participant, obedience fell because participants could see and hear their distress more clearly. This made it harder to continue harming them. Legitimacy of authority: When Milgram moved the study from Yale University to a run-down office building, obedience dropped significantly. This shows that the perceived legitimacy and status of the authority figure plays a key role in obedience."
-      }
+      },
+      {
+        q: "Explain what is meant by 'conformity' and describe one study that investigated it.",
+        marks: 4,
+        modelAnswer: "Conformity is when a person changes their behaviour or beliefs due to real or imagined pressure from a group. Asch (1951) investigated conformity using a line judgement task. Participants were shown a standard line and three comparison lines, and asked which comparison line matched the standard. The answer was always obvious. Confederates (who were in on the study) gave the same wrong answer. Asch found that real participants conformed on approximately 32% of the critical trials, even though the correct answer was clear. When one confederate gave the correct answer (the 'dissenter'), conformity dropped dramatically."
+      },
     ],
     blankfill: [
       { sentence: "Milgram found that _____ of participants delivered the maximum 450-volt shock in his baseline obedience study.", answer: "65%", options: ["25%", "45%", "65%", "90%"] },
       { sentence: "Conforming because you genuinely believe the group is correct is called _____ social influence.", answer: "informational", options: ["normative", "informational", "minority", "majority"] },
       { sentence: "Zimbardo's prison study demonstrated the power of _____ on behaviour.", answer: "social roles", options: ["genetics", "social roles", "obedience", "minority influence"] },
       { sentence: "Asch's line study showed that conformity decreases when there is at least one other person who gives the correct answer, known as a _____.", answer: "dissenter", options: ["confederate", "dissenter", "authority", "bystander"] },
+      { sentence: "The tendency to put in less effort when working in a group is called social _____.", answer: "loafing", options: ["loafing", "facilitation", "influence", "compliance"] },
+      { sentence: "Milgram's participants were placed in an _____ state, meaning they felt they were acting on behalf of the experimenter.", answer: "agentic", options: ["autonomous", "agentic", "obedient", "conformist"] },
+      { sentence: "Moscovici showed that a consistent _____ can influence the majority over time.", answer: "minority", options: ["authority", "minority", "majority", "peer"] },
+      { sentence: "Obedience involves following the instructions of an _____ figure.", answer: "authority", options: ["authority", "peer", "majority", "cultural"] },
+      { sentence: "In Asch's study, the people who intentionally gave wrong answers were called _____.", answer: "confederates", options: ["participants", "confederates", "dissenters", "agents"] },
     ]
   },
 
@@ -2148,6 +2651,20 @@ const questionBankP2 = {
         answer: 1,
         explanation: "One unique feature of human language is productivity — we can produce and understand an infinite number of new sentences. Animal communication tends to be fixed and limited to a small set of signals.",
         marks: 1
+      },
+      {
+        q: "What is 'egocentric speech' according to Piaget?",
+        options: ["Speech used to communicate with others", "Speech young children use that is not aimed at communicating with others — talking for themselves", "Speech used only to express emotions", "Adult speech that does not consider the listener's perspective"],
+        answer: 1,
+        explanation: "Piaget observed that young children often talk without directing speech at others — they narrate their own actions or thoughts. He called this egocentric speech and saw it as evidence that thought precedes language.",
+        marks: 1
+      },
+      {
+        q: "Hall (1966) identified four zones of personal space. Which zone (roughly 45cm–1.2m) is typically used with friends and acquaintances?",
+        options: ["Intimate zone", "Personal zone", "Social zone", "Public zone"],
+        answer: 1,
+        explanation: "Hall's personal zone (roughly 45cm to 1.2m) is the comfortable distance for conversations with friends and acquaintances. Inside this feels too close; outside it can feel cold or distant.",
+        marks: 1
       }
     ],
     flashcards: [
@@ -2156,24 +2673,35 @@ const questionBankP2 = {
       { front: "What is the Sapir-Whorf hypothesis?", back: "The idea that the language you speak influences (or determines) how you think and perceive the world. E.g. languages with more words for colour may lead to better colour discrimination." },
       { front: "What are the four zones of personal space identified by Hall (1966)?", back: "1. Intimate zone (0-45cm) — close relationships. 2. Personal zone (45cm-1.2m) — friends. 3. Social zone (1.2-3.6m) — acquaintances. 4. Public zone (3.6m+) — strangers/public speaking." },
       { front: "What did Gardner and Gardner's research with Washoe show?", back: "Washoe the chimpanzee learned over 150 American Sign Language signs, could combine them in new ways, and appeared to teach signs to her offspring — suggesting limited language ability in great apes." },
+      { front: "What is paralanguage?", back: "Aspects of speech beyond the words themselves — tone, pitch, pace, pauses, volume. These can dramatically alter the meaning of what is said." },
+      { front: "What is the difference between verbal and non-verbal communication?", back: "Verbal communication uses spoken or written words. Non-verbal communication uses body language, facial expressions, eye contact, gestures, posture, and personal space." },
+      { front: "What is egocentric speech according to Piaget?", back: "Talk by young children that is not intended to communicate — they narrate their own actions for themselves. Piaget saw it as evidence that thought precedes language." },
+      { front: "What does Chomsky's theory say about language?", back: "Chomsky argued humans are born with an innate 'language acquisition device' (LAD) — a biological predisposition to learn language. This explains why children across all cultures acquire language in similar stages without being formally taught." },
     ],
     shortanswer: [
       {
         q: "Compare Piaget's and Vygotsky's views on the relationship between language and thought. [6 marks]",
         marks: 6,
-        modelAnswer: "Piaget argued that thought comes before language — children must develop a concept first, and then acquire the word to describe it. For example, a child understands the concept of 'gone' before learning the word. This means language is a product of cognitive development, not a cause. Vygotsky disagreed, arguing that language drives cognitive development. He believed that social interaction and language are essential tools for learning to think. As children use language socially, it becomes internalised as inner speech, which guides and organises thinking. A strength of Piaget's view is that research shows young children display cognitive abilities before they have the words for them. However, Vygotsky's approach better explains how children in social environments develop faster with support from adults (the Zone of Proximal Development). Overall, most modern psychologists believe language and thought are mutually influential rather than one simply causing the other."
+        modelAnswer: "Piaget argued that thought comes before language — children must develop a concept first, and then acquire the word to describe it. For example, a child understands the concept of 'gone' before learning the word. This means language is a product of cognitive development, not a cause. Vygotsky disagreed, arguing that language drives cognitive development. He believed that social interaction and language are essential tools for learning to think. As children use language socially, it becomes internalised as inner speech, which guides and organises thinking. A strength of Piaget's view is that research shows young children display cognitive abilities before they have the words for them. However, Vygotsky's approach better explains how children in social environments develop faster with support from adults. Overall, most modern psychologists believe language and thought are mutually influential rather than one simply causing the other."
       },
       {
         q: "Give two examples of non-verbal communication and explain how each might affect social interactions.",
         marks: 4,
         modelAnswer: "Eye contact: Maintaining appropriate eye contact signals that you are engaged and trustworthy. Too little eye contact can make you seem dishonest or disinterested, while too much can seem threatening or aggressive. Proxemics (personal space): Standing too close to someone can make them feel uncomfortable and invade their personal space, which may cause them to back away. The appropriate distance varies between cultures and relationships — standing at a social distance with a stranger is considered normal, while getting too close can cause conflict."
-      }
+      },
+      {
+        q: "Outline one study into animal communication and evaluate what it tells us about whether animals can truly use language.",
+        marks: 4,
+        modelAnswer: "Gardner and Gardner (1969) taught Washoe, a chimpanzee, to use American Sign Language. Washoe learned over 150 signs and could combine them to create new meanings. She appeared to teach some signs to her offspring. This suggests apes have some capacity for symbolic communication. However, critics argue Washoe never demonstrated true grammar or the ability to generate novel complex sentences, which are considered hallmarks of human language. The study may also have involved unconscious cueing by trainers (similar to Clever Hans). Therefore, while animals may communicate in sophisticated ways, whether this constitutes true language remains debated."
+      },
     ],
     blankfill: [
       { sentence: "Vygotsky believed that _____ drives cognitive development through social interaction.", answer: "language", options: ["instinct", "language", "play", "emotion"] },
       { sentence: "The idea that the language we speak shapes how we think is known as the _____ hypothesis.", answer: "Sapir-Whorf", options: ["Piaget", "Sapir-Whorf", "Chomsky", "Vygotsky"] },
       { sentence: "The invisible 'bubble' of space around a person is called _____.", answer: "personal space", options: ["proxemics", "personal space", "body language", "paralanguage"] },
       { sentence: "Aspects of speech such as tone, pitch, and pace that add meaning beyond the words are collectively called _____.", answer: "paralanguage", options: ["dialect", "paralanguage", "register", "non-verbal cues"] },
+      { sentence: "Chomsky proposed that humans are born with an innate _____ that makes us predisposed to learn language.", answer: "language acquisition device", options: ["language acquisition device", "speech module", "verbal schema", "communication centre"] },
+      { sentence: "Young children's speech that is not directed at communicating with others was called _____ speech by Piaget.", answer: "egocentric", options: ["egocentric", "social", "inner", "private"] },
     ]
   },
 
@@ -2237,6 +2765,27 @@ const questionBankP2 = {
         answer: 1,
         explanation: "Serotonin is a neurotransmitter that plays a key role in regulating mood, sleep, digestion, and appetite. Low serotonin levels are associated with depression, which is why many antidepressants work by increasing serotonin availability.",
         marks: 1
+      },
+      {
+        q: "What does an EEG measure?",
+        options: ["Blood flow changes in the brain", "Electrical activity in the brain via electrodes on the scalp", "The structure of brain regions using magnets", "Glucose use by active brain areas"],
+        answer: 1,
+        explanation: "An EEG (electroencephalogram) records electrical activity produced by the brain using electrodes placed on the scalp. It has excellent time resolution but poor spatial resolution — it can tell you when something happened but not exactly where.",
+        marks: 1
+      },
+      {
+        q: "Which brain area did Broca identify as being important for speech production?",
+        options: ["The occipital lobe", "The left frontal lobe", "The right parietal lobe", "The cerebellum"],
+        answer: 1,
+        explanation: "Broca's area, located in the left frontal lobe, is involved in speech production. Damage to this area causes Broca's aphasia — the person understands language but struggles to produce fluent speech.",
+        marks: 1
+      },
+      {
+        q: "What is the function of the hippocampus?",
+        options: ["Controlling balance and coordination", "Regulating breathing and heart rate", "Forming and consolidating new memories", "Processing visual information"],
+        answer: 2,
+        explanation: "The hippocampus, located in the temporal lobe, plays a crucial role in forming new long-term memories. Damage to the hippocampus (as seen in patient H.M.) causes severe inability to form new memories.",
+        marks: 1
       }
     ],
     flashcards: [
@@ -2245,6 +2794,10 @@ const questionBankP2 = {
       { front: "What is a synapse and how does it work?", back: "A synapse is the tiny gap between neurons. When a nerve impulse reaches the end of one neuron, it triggers the release of neurotransmitters, which cross the synapse and bind to receptors on the next neuron, continuing the signal." },
       { front: "What is lateralisation of brain function?", back: "Lateralisation means that different functions are controlled more by one hemisphere than the other. For most people, the left hemisphere controls language and logical thinking; the right hemisphere handles creativity and spatial tasks." },
       { front: "What did split-brain studies by Sperry and Gazzaniga reveal?", back: "Patients with a severed corpus callosum (the connection between hemispheres) showed that the two hemispheres have different specialisations. The left hemisphere could name objects; the right could recognise them by touch but not name them." },
+      { front: "What is the function of the hippocampus?", back: "Forming and consolidating new long-term memories. Damage causes anterograde amnesia — inability to form new memories (as seen in patient H.M.)." },
+      { front: "What is Broca's area and what happens if it is damaged?", back: "Broca's area in the left frontal lobe controls speech production. Damage causes Broca's aphasia — the person can understand language but struggles to produce fluent speech." },
+      { front: "What does an EEG measure and what are its strengths/limitations?", back: "EEG measures electrical activity via scalp electrodes. Strength: excellent time resolution (milliseconds). Limitation: poor spatial resolution — cannot pinpoint exactly where in the brain activity is occurring." },
+      { front: "What is dopamine and what is it associated with?", back: "Dopamine is a neurotransmitter associated with reward, motivation, and pleasure. It also plays a role in movement — low dopamine is linked to Parkinson's disease; too much is associated with schizophrenia." },
     ],
     shortanswer: [
       {
@@ -2256,13 +2809,27 @@ const questionBankP2 = {
         q: "Explain what is meant by 'neuroplasticity' and give one piece of evidence for it.",
         marks: 4,
         modelAnswer: "Neuroplasticity refers to the brain's ability to change and reorganise its structure and connections in response to learning, experience, or injury. It is strongest in childhood but continues throughout life. One piece of evidence comes from a study of London taxi drivers (Maguire et al., 2000), who were found to have a larger hippocampus than non-taxi drivers. The hippocampus is involved in spatial navigation. The fact that the most experienced drivers had the biggest change suggests the brain physically adapts to the demands placed on it — demonstrating neuroplasticity."
-      }
+      },
+      {
+        q: "Explain the difference between the functions of the left and right hemispheres of the brain.",
+        marks: 4,
+        modelAnswer: "The brain is divided into two hemispheres that are largely responsible for opposite sides of the body (contralateral control). In most people, the left hemisphere is dominant for language — both producing and understanding speech — as well as logical and analytical thinking. The right hemisphere tends to handle spatial awareness, creativity, face recognition, and processing of non-verbal information. Evidence for this lateralisation comes from split-brain patients (Sperry and Gazzaniga) and case studies such as Broca's patients, who had damage to the left hemisphere and lost the ability to produce speech."
+      },
+      {
+        q: "Describe the structure of a neuron and explain how a signal is transmitted from one neuron to another.",
+        marks: 4,
+        modelAnswer: "A neuron consists of a cell body, dendrites (which receive signals from other neurons), an axon (which carries electrical signals away from the cell body), and axon terminals at the end. The axon is often covered in a myelin sheath which speeds up transmission. When an electrical impulse reaches the axon terminals, it triggers the release of neurotransmitters into the synapse (the gap between neurons). These chemicals diffuse across the synapse and bind to receptor sites on the dendrites of the next neuron, either exciting or inhibiting it."
+      },
     ],
     blankfill: [
       { sentence: "The _____ is responsible for co-ordinating smooth movement and balance.", answer: "cerebellum", options: ["cerebral cortex", "cerebellum", "hippocampus", "medulla"] },
       { sentence: "The brain's ability to change and reorganise in response to experience is called _____.", answer: "neuroplasticity", options: ["neural decay", "neuroplasticity", "lateralisation", "myelination"] },
       { sentence: "Chemical messengers that cross the gap between neurons are called _____.", answer: "neurotransmitters", options: ["hormones", "neurotransmitters", "axons", "dendrites"] },
       { sentence: "The case of _____ provided early evidence that the frontal lobe is involved in personality and decision-making.", answer: "Phineas Gage", options: ["Broca", "Phineas Gage", "Sperry", "Maguire"] },
+      { sentence: "The _____ lobe of the brain is responsible for processing visual information.", answer: "occipital", options: ["frontal", "parietal", "temporal", "occipital"] },
+      { sentence: "_____ area, in the left frontal lobe, is responsible for producing speech.", answer: "Broca's", options: ["Wernicke's", "Broca's", "Gage's", "Sperry's"] },
+      { sentence: "The _____ connects the two hemispheres of the brain and allows them to communicate.", answer: "corpus callosum", options: ["cerebellum", "corpus callosum", "hippocampus", "thalamus"] },
+      { sentence: "The neurotransmitter _____ is associated with reward and motivation, and low levels are linked to Parkinson's disease.", answer: "dopamine", options: ["serotonin", "dopamine", "adrenaline", "cortisol"] },
     ]
   },
 
@@ -2275,7 +2842,7 @@ const questionBankP2 = {
         q: "Which of the following is a symptom of depression?",
         options: ["Periods of very high energy and reduced need for sleep", "Persistent low mood and loss of interest in activities", "Seeing or hearing things that aren't there", "Extreme fear of a specific object or situation"],
         answer: 1,
-        explanation: "Depression is characterised by persistent low mood, loss of interest or pleasure in activities, fatigue, feelings of worthlessness, and difficulty concentrating. The high energy described in the other option is associated with mania (bipolar disorder).",
+        explanation: "Depression is characterised by persistent low mood, loss of interest or pleasure in activities, fatigue, feelings of worthlessness, and difficulty concentrating.",
         marks: 1
       },
       {
@@ -2289,21 +2856,21 @@ const questionBankP2 = {
         q: "Cognitive behavioural therapy (CBT) aims to treat mental health problems by:",
         options: ["Giving the patient medication to alter brain chemistry", "Using hypnosis to access unconscious thoughts", "Identifying and changing unhelpful thought patterns and behaviours", "Helping the patient talk freely about their childhood"],
         answer: 2,
-        explanation: "CBT focuses on the link between thoughts, feelings, and behaviours. It helps patients identify negative thinking patterns (cognitive distortions) and replace them with more helpful thoughts, which then improves mood and behaviour.",
+        explanation: "CBT focuses on the link between thoughts, feelings, and behaviours. It helps patients identify negative thinking patterns (cognitive distortions) and replace them with more helpful thoughts.",
         marks: 1
       },
       {
         q: "What is a phobia?",
         options: ["A type of mood disorder characterised by low mood", "An intense, irrational fear of a specific object or situation that is out of proportion to the actual threat", "A disorder involving unwanted repetitive thoughts and behaviours", "A condition where someone loses touch with reality"],
         answer: 1,
-        explanation: "A phobia is an intense, persistent, and irrational fear of a specific object, animal, activity, or situation. The fear is excessive and out of proportion to the actual danger, and it interferes with daily life.",
+        explanation: "A phobia is an intense, persistent, and irrational fear of a specific object, animal, activity, or situation. The fear is excessive and out of proportion to the actual danger.",
         marks: 1
       },
       {
         q: "According to the biological approach, what causes mental health disorders such as depression?",
         options: ["Learned patterns of negative thinking", "Imbalances in neurotransmitters such as serotonin", "Traumatic childhood experiences and unconscious conflicts", "Learned helplessness due to lack of control"],
         answer: 1,
-        explanation: "The biological approach suggests that mental health disorders are caused by physical factors such as neurotransmitter imbalances, genetic predispositions, or brain structure differences. Depression is linked to low serotonin and noradrenaline levels.",
+        explanation: "The biological approach suggests that mental health disorders are caused by physical factors such as neurotransmitter imbalances, genetic predispositions, or brain structure differences.",
         marks: 1
       },
       {
@@ -2317,41 +2884,81 @@ const questionBankP2 = {
         q: "What is the role of a drug treatment such as an antidepressant (e.g. an SSRI)?",
         options: ["To teach the patient new coping strategies through talking", "To increase the availability of serotonin in the brain by preventing its reabsorption", "To remove the phobia through repeated exposure", "To help the patient identify negative automatic thoughts"],
         answer: 1,
-        explanation: "SSRIs (Selective Serotonin Reuptake Inhibitors) work by blocking the reuptake of serotonin back into the neuron, leaving more serotonin available in the synapse. This increases mood-regulating activity in the brain.",
+        explanation: "SSRIs (Selective Serotonin Reuptake Inhibitors) work by blocking the reuptake of serotonin back into the neuron, leaving more serotonin available in the synapse.",
         marks: 1
       },
       {
         q: "What percentage of people in the UK experience a mental health problem in any given year?",
         options: ["About 1 in 100", "About 1 in 4", "About 1 in 2", "About 3 in 4"],
         answer: 1,
-        explanation: "Research suggests approximately 1 in 4 people in the UK experience a mental health problem each year. This makes mental health one of the most common health challenges in the country.",
+        explanation: "Research suggests approximately 1 in 4 people in the UK experience a mental health problem each year.",
+        marks: 1
+      },
+      {
+        q: "Which definition of abnormality focuses on whether the behaviour causes distress or stops someone from living normally?",
+        options: ["Statistical infrequency", "Deviation from social norms", "Failure to function adequately", "Deviation from ideal mental health"],
+        answer: 2,
+        explanation: "Failure to function adequately defines abnormality in terms of whether the behaviour impairs a person's ability to cope with everyday life — whether it causes significant distress or prevents them from functioning.",
+        marks: 1
+      },
+      {
+        q: "Systematic desensitisation is a therapy used to treat phobias. What process does it rely on?",
+        options: ["Classical conditioning — pairing the feared stimulus with relaxation", "Operant conditioning — rewarding non-fearful behaviour", "Cognitive restructuring — changing irrational thoughts about the phobia", "Medication — reducing anxiety chemically"],
+        answer: 0,
+        explanation: "Systematic desensitisation uses classical conditioning principles. The feared stimulus is gradually paired with a relaxation response, replacing the fear response. Over time, the phobia is extinguished.",
+        marks: 1
+      },
+      {
+        q: "What is meant by 'deviation from social norms' as a definition of abnormality?",
+        options: ["Being statistically rare in the population", "Behaving in a way that violates the unwritten social rules of a group or culture", "Not having positive psychological wellbeing", "Being unable to carry out daily tasks"],
+        answer: 1,
+        explanation: "Deviation from social norms means behaving in a way that breaks the unwritten rules about what is acceptable in a given society or context. What counts as a norm varies across cultures and time periods.",
         marks: 1
       }
     ],
     flashcards: [
       { front: "What are the four definitions of abnormality?", back: "1. Statistical infrequency (behaviour is rare). 2. Deviation from social norms (breaks unwritten social rules). 3. Failure to function adequately (cannot manage daily life). 4. Deviation from ideal mental health (lacks positive wellbeing)." },
       { front: "What are the main symptoms of depression?", back: "Persistent low mood, loss of interest/pleasure, fatigue, feelings of worthlessness or guilt, difficulty concentrating, changes in sleep and appetite, and in severe cases, thoughts of self-harm or suicide." },
-      { front: "What is CBT and how does it work?", back: "Cognitive Behavioural Therapy challenges negative thinking patterns and behaviours. The therapist and patient work together to identify cognitive distortions (e.g. 'I'm a failure') and replace them with realistic, helpful thoughts, leading to improved mood and behaviour." },
+      { front: "What is CBT and how does it work?", back: "Cognitive Behavioural Therapy challenges negative thinking patterns and behaviours. The therapist and patient work together to identify cognitive distortions and replace them with realistic, helpful thoughts." },
       { front: "What is systematic desensitisation and what is it used for?", back: "A therapy for phobias. The patient is gradually exposed to the feared object/situation, starting with the least scary version, while being taught relaxation techniques. Over time the phobia is extinguished through counter-conditioning." },
       { front: "What are the strengths and limitations of drug treatments for depression?", back: "Strengths: Effective for many patients, easy to take, can be combined with therapy. Limitations: Side effects (e.g. nausea, sleep problems), do not address the root cause, patients may relapse when they stop taking them." },
+      { front: "What is 'failure to function adequately' as a definition of abnormality?", back: "When a person's behaviour or mental state prevents them from carrying out normal daily activities, maintaining relationships, or stops them experiencing a reasonable quality of life." },
+      { front: "What did Jahoda (1958) suggest about ideal mental health?", back: "Jahoda identified six criteria for positive mental health: self-acceptance, personal growth, autonomy, environmental mastery, accurate perception of reality, and resistance to stress. Lacking these indicates abnormality." },
+      { front: "What is the difference between systematic desensitisation and flooding as phobia treatments?", back: "Systematic desensitisation: gradual exposure starting with the least feared version, combined with relaxation. Flooding: immediate full exposure to the feared stimulus until anxiety subsides. Both use classical conditioning." },
+      { front: "What is the 'cognitive' explanation for depression?", back: "Beck's cognitive triad proposes that depression is caused by negative automatic thoughts about the self ('I'm worthless'), the world ('Everything goes wrong for me'), and the future ('Things will never improve')." },
+      { front: "What is addiction and what are its key features?", back: "Addiction is a compulsive dependence on a substance or behaviour despite negative consequences. Key features: tolerance (needing more for the same effect), withdrawal symptoms, cravings, and loss of control." },
     ],
     shortanswer: [
       {
         q: "Describe and evaluate one definition of abnormality. [6 marks]",
         marks: 6,
-        modelAnswer: "Statistical infrequency defines abnormal behaviour as behaviour that is statistically rare in the population. For example, an IQ below 70 affects fewer than 2% of people and is considered clinically significant. This definition is useful because it gives a clear, objective measure that can be applied consistently — if a behaviour falls outside the normal range, it is classed as abnormal. However, there are important limitations. Firstly, some rare behaviours are actually positive — for example, exceptional intelligence is statistically infrequent but clearly not a mental disorder. Secondly, the definition says nothing about distress or suffering — someone might have a statistically unusual behaviour pattern but be perfectly happy and functional. Finally, it is culturally relative — what is rare in one culture may be common in another, so the definition does not work equally well across different societies."
+        modelAnswer: "Statistical infrequency defines abnormal behaviour as behaviour that is statistically rare in the population. For example, an IQ below 70 affects fewer than 2% of people and is considered clinically significant. This definition is useful because it gives a clear, objective measure that can be applied consistently — if a behaviour falls outside the normal range, it is classed as abnormal. However, there are important limitations. Firstly, some rare behaviours are actually positive — for example, exceptional intelligence is statistically infrequent but clearly not a mental disorder. Secondly, the definition says nothing about distress or suffering — someone might have a statistically unusual behaviour pattern but be perfectly happy and functional. Finally, it is culturally relative — what is rare in one culture may be common in another."
       },
       {
         q: "A student feels anxious and low in mood. They decide to try CBT. Explain what CBT involves and how it might help this student.",
         marks: 4,
-        modelAnswer: "CBT (Cognitive Behavioural Therapy) is a talking therapy that focuses on the connection between thoughts, feelings, and behaviours. A therapist would help the student identify negative automatic thoughts — such as 'I'm going to fail everything' or 'Nobody likes me' — and challenge whether these thoughts are realistic. The student would learn to replace these unhelpful thoughts with more balanced ones. Because thoughts, feelings, and behaviours are linked, changing the thought patterns would reduce the anxiety and low mood, and also encourage more positive behaviours (e.g. attending school, socialising). CBT often includes 'homework' tasks to practise these skills in real life."
-      }
+        modelAnswer: "CBT (Cognitive Behavioural Therapy) is a talking therapy that focuses on the connection between thoughts, feelings, and behaviours. A therapist would help the student identify negative automatic thoughts — such as 'I'm going to fail everything' — and challenge whether these thoughts are realistic. The student would learn to replace these unhelpful thoughts with more balanced ones. Because thoughts, feelings, and behaviours are linked, changing the thought patterns would reduce the anxiety and low mood, and also encourage more positive behaviours. CBT often includes 'homework' tasks to practise these skills in real life."
+      },
+      {
+        q: "Explain two limitations of defining abnormality as 'deviation from social norms'.",
+        marks: 4,
+        modelAnswer: "First, social norms vary across cultures and historical periods. For example, homosexuality was once classified as a mental disorder in many countries — showing that definitions of abnormality reflect the values of the time and place, not an objective standard. This makes the definition culturally relative. Second, the definition can be misused. Governments or institutions could classify dissenting or non-conforming behaviour as abnormal to exert social control — for example, Soviet psychiatrists diagnosed political dissidents with mental illness. This shows the definition is open to abuse."
+      },
+      {
+        q: "Describe two treatments for phobias and explain one advantage and one disadvantage of each.",
+        marks: 6,
+        modelAnswer: "Systematic desensitisation is a gradual exposure treatment. The patient creates a hierarchy of fear (from least to most frightening) and is exposed to each level while practising relaxation techniques. Advantage: it is gradual and gentle, making it suitable for patients with severe phobias. Disadvantage: it takes time and many sessions to complete. Flooding involves immediate, intense exposure to the feared stimulus until anxiety naturally reduces. Advantage: it is much faster — sometimes effective in just one session. Disadvantage: it is very distressing and some patients refuse to complete the treatment or drop out, which could reinforce the phobia."
+      },
     ],
     blankfill: [
       { sentence: "CBT stands for _____ therapy and focuses on changing unhelpful thought patterns.", answer: "Cognitive Behavioural", options: ["Cognitive Behavioural", "Clinical Biopsychological", "Compassion Based", "Conditioned Behavioural"] },
       { sentence: "The definition of abnormality that focuses on behaviour being rare in the population is called _____.", answer: "statistical infrequency", options: ["deviation from social norms", "statistical infrequency", "failure to function", "ideal mental health"] },
       { sentence: "SSRIs treat depression by increasing the availability of _____ in the brain.", answer: "serotonin", options: ["dopamine", "serotonin", "adrenaline", "noradrenaline"] },
       { sentence: "A therapy that gradually exposes a patient to their feared object using relaxation techniques is called _____.", answer: "systematic desensitisation", options: ["CBT", "systematic desensitisation", "flooding", "psychoanalysis"] },
+      { sentence: "Jahoda's definition of abnormality focuses on the absence of _____ mental health.", answer: "ideal", options: ["statistical", "social", "ideal", "functional"] },
+      { sentence: "Beck's _____ triad describes negative thoughts about the self, the world, and the future that cause depression.", answer: "cognitive", options: ["emotional", "cognitive", "behavioural", "biological"] },
+      { sentence: "The definition of abnormality that focuses on inability to carry out daily tasks is called failure to function _____.", answer: "adequately", options: ["normally", "adequately", "correctly", "socially"] },
+      { sentence: "Immediate full exposure to a feared stimulus until anxiety reduces is a therapy called _____.", answer: "flooding", options: ["systematic desensitisation", "flooding", "CBT", "counselling"] },
     ]
   }
 
@@ -2380,9 +2987,12 @@ const paperConfig = {
 
 // On app load — decide which screen to show
 (function() {
-  const hasNickname = !!localStorage.getItem('psych_nickname');
-  if (!hasNickname) {
-    showScreen('nicknameScreen');
+  const loggedIn   = localStorage.getItem('psych_logged_in');
+  const nickname   = localStorage.getItem('psych_nickname');
+  if (!loggedIn || !nickname) {
+    // Check if they have an existing nickname from before PIN was introduced
+    // If so, send them to register to set a PIN
+    showScreen('registerScreen');
   }
   // else paperScreen shown by default
 })();
@@ -2490,7 +3100,27 @@ function selectPaper(num) {
   state.paper = num;
   const topics = paperConfig[num].topics;
   state.topic = topics[0];
+
+  const isP1 = num === 1;
+  const emoji = isP1 ? '📗' : '📘';
+  const color = isP1 ? 'var(--purple-light)' : 'var(--teal-light)';
+  const topicSummary = isP1
+    ? 'Paper 1 · Memory, Perception, Development, Research'
+    : 'Paper 2 · Social, Language, Brain, Psych Problems';
+
   document.getElementById('headerSubtitle').textContent = `${paperConfig[num].label} · AQA GCSE · Let's get those marks! 💪`;
+
+  // Paper indicator in streak bar
+  const indicator = document.getElementById('paperIndicator');
+  indicator.style.display = 'flex';
+  document.getElementById('paperIndicatorEmoji').textContent = emoji;
+  const lbl = document.getElementById('paperIndicatorLabel');
+  lbl.textContent = paperConfig[num].label;
+  lbl.style.color = color;
+
+  // Current paper label under topic heading
+  document.getElementById('currentPaperLabel').textContent = topicSummary;
+
   goHome();
 }
 
@@ -2499,6 +3129,7 @@ function goHome() {
   updateDashboard();
   updateProgressBars();
   updateDailyChallengeUI();
+  updateNicknameDisplay();
   showScreen('homeScreen');
 }
 
