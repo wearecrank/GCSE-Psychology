@@ -2840,13 +2840,15 @@ function renderStudyQuizQuestion() {
   const area = document.getElementById('studyQuizArea');
 
   if (index >= questions.length) {
-    const pct = Math.round(score / questions.length * 100);
+    const pct = Math.round((score / questions.length) * 100);
     const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '🎉' : '💪';
+    const scoreDisplay = Number.isInteger(score) ? score : score.toFixed(1);
     area.innerHTML = `
       <div style="text-align:center;padding:20px 0">
         <div style="font-size:3rem;margin-bottom:12px">${emoji}</div>
-        <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--yellow);margin-bottom:8px">${score}/${questions.length}</div>
-        <div style="color:var(--text-muted);margin-bottom:24px">${study.name}</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--yellow);margin-bottom:4px">${scoreDisplay} / ${questions.length}</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:4px">${pct}% — ${pct >= 80 ? 'Excellent!' : pct >= 60 ? 'Good effort!' : 'Keep practising!'}</div>
+        <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:24px">${study.name}</div>
         <div class="btn-row" style="justify-content:center">
           <button class="btn btn-primary" onclick="startStudyQuiz('${study.id}')">🔄 Try again</button>
           <button class="btn btn-secondary" onclick="showStudyList('${study.topic}')">← Back to studies</button>
@@ -2856,8 +2858,6 @@ function renderStudyQuizQuestion() {
   }
 
   const q = questions[index];
-  const hasKey = !!getApiKey();
-
   area.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span style="font-size:0.8rem;color:var(--text-muted)">${study.name}</span>
@@ -2865,23 +2865,22 @@ function renderStudyQuizQuestion() {
     </div>
     <div style="font-size:1rem;font-weight:700;line-height:1.6;margin-bottom:16px">${q.q}</div>
     <div id="sqRevealArea">
-      ${hasKey ? `
-        <textarea id="sqAnswerInput"
-          placeholder="Type your answer here..."
-          style="width:100%;min-height:100px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;line-height:1.6;resize:vertical;box-sizing:border-box;margin-bottom:12px"
-        ></textarea>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" style="flex:1" onclick="submitStudyAnswer()">🤖 Mark my answer</button>
-          <button class="btn btn-secondary" onclick="revealStudyAnswer()">👁️ Just show answer</button>
-        </div>
-      ` : `
-        <textarea id="sqAnswerInput"
-          placeholder="Type your answer here, then reveal to check..."
-          style="width:100%;min-height:100px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;line-height:1.6;resize:vertical;box-sizing:border-box;margin-bottom:12px"
-        ></textarea>
-        <button class="btn btn-primary" style="width:100%" onclick="revealStudyAnswer()">👁️ Reveal answer</button>
-      `}
+      <textarea id="sqAnswerInput"
+        placeholder="Type your answer here..."
+        style="width:100%;min-height:110px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;line-height:1.6;resize:vertical;box-sizing:border-box;margin-bottom:12px"
+      ></textarea>
+      <button class="btn btn-primary" style="width:100%" onclick="submitStudyAnswer()">🤖 Submit for marking</button>
     </div>`;
+}
+
+function studyQuizAnswer(points) {
+  studyQuizState.score += (points || 0);
+  studyQuizState.index++;
+  renderStudyQuizQuestion();
+}
+
+function exitStudyQuiz() {
+  showStudyList(studyQuizState.study.topic);
 }
 
 // ==========================================
@@ -2965,7 +2964,7 @@ async function submitStudyAnswer() {
         <div style="font-weight:700;margin-bottom:6px">AI marking limit reached</div>
         <div style="font-size:0.85rem;color:var(--text-muted)">${usageCheck.reason}</div>
       </div>
-      <button class="btn btn-secondary" style="width:100%;margin-bottom:8px" onclick="revealStudyAnswer()">👁️ Self-mark instead</button>`;
+      <button class="btn btn-secondary" style="width:100%" onclick="studyQuizAnswer(0)">→ Skip this question</button>`;
     return;
   }
 
@@ -3024,9 +3023,8 @@ KEY POINT TO REMEMBER: [one memorable sentence to help them recall this for the 
     const improve = improveMatch ? improveMatch[1].trim() : '';
     const keyPoint = keyMatch ? keyMatch[1].trim() : '';
 
-    // Update score
-    if (mark === 'CORRECT') studyQuizState.score++;
-    else if (mark === 'PARTIAL') studyQuizState.score += 0.5;
+    // Score: 1 for correct, 0.5 for partial, 0 for incorrect
+    const points = mark === 'CORRECT' ? 1 : mark === 'PARTIAL' ? 0.5 : 0;
 
     // Pick colours and emoji based on mark
     const markConfig = {
@@ -3046,7 +3044,7 @@ KEY POINT TO REMEMBER: [one memorable sentence to help them recall this for the 
       <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:14px;font-size:0.82rem;line-height:1.6">
         <strong style="color:var(--text-muted)">Model answer:</strong><br><br>${q.a}
       </div>
-      <button class="btn btn-primary" style="width:100%" onclick="studyQuizAnswer()">Next question →</button>`;
+      <button class="btn btn-primary" style="width:100%" onclick="studyQuizAnswer(${points})">Next question →</button>`;
 
   } catch(e) {
     // Show the actual error so we can diagnose it
@@ -3055,40 +3053,8 @@ KEY POINT TO REMEMBER: [one memorable sentence to help them recall this for the 
         <strong>⚠️ AI marking failed</strong><br>
         <span style="color:var(--text-muted);font-size:0.8rem">${e.message}</span>
       </div>
-      <button class="btn btn-secondary" style="width:100%;margin-bottom:8px" onclick="revealStudyAnswer()">👁️ Self-mark instead</button>`;
+      <button class="btn btn-secondary" style="width:100%" onclick="studyQuizAnswer(0)">→ Skip this question</button>`;
   }
-}
-
-function revealStudyAnswer() {
-  const { questions, index } = studyQuizState;
-  const q = questions[index];
-  const typedAnswer = document.getElementById('sqAnswerInput')?.value?.trim() || '';
-
-  document.getElementById('sqRevealArea').innerHTML = `
-    ${typedAnswer ? `
-      <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:12px;font-size:0.85rem;color:var(--text-muted)">
-        <strong style="color:var(--text)">Your answer:</strong><br>${typedAnswer}
-      </div>` : ''}
-    <div style="background:rgba(16,185,129,0.1);border:1px solid var(--green);border-radius:12px;padding:14px;margin-bottom:16px;font-size:0.9rem;line-height:1.7">
-      <strong style="color:var(--green)">Model answer:</strong><br><br>${q.a}
-    </div>
-    <div style="text-align:center;margin-bottom:10px;font-size:0.85rem;color:var(--text-muted)">How did you do?</div>
-    <div class="btn-row" style="justify-content:center">
-      <button class="btn btn-primary" style="background:var(--green)" onclick="studyQuizAnswer(true)">✅ Got it!</button>
-      <button class="btn btn-secondary" style="background:rgba(245,158,11,0.2);border-color:var(--yellow);color:var(--yellow)" onclick="studyQuizAnswer(true, 0.5)">⚠️ Partly right</button>
-      <button class="btn btn-secondary" style="border-color:var(--red-light);color:var(--red-light)" onclick="studyQuizAnswer(false)">❌ Missed it</button>
-    </div>`;
-}
-
-function studyQuizAnswer(correct, partial) {
-  if (correct && !partial) studyQuizState.score++;
-  else if (partial) studyQuizState.score += 0.5;
-  studyQuizState.index++;
-  renderStudyQuizQuestion();
-}
-
-function exitStudyQuiz() {
-  showStudyList(studyQuizState.study.topic);
 }
 
 const questionBank = {
