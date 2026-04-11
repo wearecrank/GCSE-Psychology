@@ -1246,9 +1246,7 @@
         <div class="paper-btn-topics">Social Influence · Language, Thought & Communication · Brain & Neuropsychology · Psychological Problems</div>
         <div class="paper-btn-emoji">📘</div>
       </button>
-    </div>
-    <div style="margin-top:16px">
-      <button class="paper-btn" style="width:100%;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.08));border-color:rgba(245,158,11,0.4)" onclick="showRevisionHub()">
+      <button class="paper-btn" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.08));border-color:rgba(245,158,11,0.4)" onclick="showRevisionHub()">
         <div class="paper-btn-tag" style="background:rgba(245,158,11,0.2);color:var(--yellow)">📚 Studies & Cases</div>
         <div class="paper-btn-title" style="color:var(--yellow)">Revision Hub</div>
         <div class="paper-btn-topics">Learn about key studies — read the details, then test yourself</div>
@@ -2507,7 +2505,100 @@ const studyBank = [
       { q: 'Give one strength of laboratory experiments.', a: 'High internal validity — careful control of variables makes it easier to establish cause and effect and rule out alternative explanations.' },
       { q: 'Give one weakness of laboratory experiments.', a: 'Low ecological validity — the artificial setting may not reflect how behaviour occurs in real life, making it hard to generalise findings.' }
     ]
+  },
+
+  // ===== MEMORY (additional) =====
+  {
+    id: 'atkinson1968',
+    name: 'Atkinson & Schiffrin (1968)',
+    topic: 'Memory',
+    topicEmoji: '🧩',
+    topicColor: '#A78BFA',
+    subtitle: 'Multi-Store Model of Memory',
+    aim: 'To propose a model explaining how memory is structured and how information moves between memory stores.',
+    method: 'Atkinson and Schiffrin developed the Multi-Store Model (MSM) based on existing experimental evidence. They proposed that memory consists of three distinct stores: the sensory register, short-term memory (STM), and long-term memory (LTM), each with different capacities, durations, and encoding types.',
+    results: 'The model proposes that information first enters the sensory register (held for less than a second). If attention is paid, it moves to STM (capacity: 7+/-2 items; duration: 18-30 seconds). Through rehearsal, information can be transferred to LTM (unlimited capacity and duration).',
+    conclusion: 'Memory is not a single store but a series of distinct stores. Rehearsal is the key mechanism for transferring information from STM to LTM. Without rehearsal, information is lost through decay or displacement.',
+    strength: 'Supported by research evidence — studies such as Baddeley (1966) and Murdock (1962) provide evidence for distinct stores. It was hugely influential and sparked decades of memory research.',
+    weakness: 'Oversimplifies memory — Baddeley and Hitch later showed STM is not a single store but a multi-component working memory system. The model also overemphasises rehearsal as the only route to LTM.',
+    quizQuestions: [
+      { q: 'What are the three stores in Atkinson and Schiffrin\'s Multi-Store Model?', a: 'Sensory register, short-term memory (STM), and long-term memory (LTM).' },
+      { q: 'What is the capacity and duration of short-term memory according to the MSM?', a: 'Capacity: approximately 7+/-2 items. Duration: 18-30 seconds without rehearsal.' },
+      { q: 'How does information move from STM to LTM in the Multi-Store Model?', a: 'Through rehearsal — repeatedly going over information keeps it in STM long enough to be encoded into LTM.' },
+      { q: 'Give one strength of the Multi-Store Model.', a: 'Supported by research — Murdock\'s serial position curve and Baddeley\'s encoding studies both support the existence of separate STM and LTM stores.' },
+      { q: 'Give one weakness of the Multi-Store Model.', a: 'It oversimplifies STM — Baddeley and Hitch\'s Working Memory Model showed STM is not a single store but a multi-component system.' }
+    ]
+  },
+
+  // ===== LANGUAGE (additional) =====
+  {
+    id: 'yuki2007',
+    name: 'Yuki et al. (2007)',
+    topic: 'Language, Thought & Communication',
+    topicEmoji: '💬',
+    topicColor: '#FDE68A',
+    subtitle: 'Emoticons and Cultural Differences in Emotion',
+    aim: 'To investigate whether cultural background affects how people interpret emotions from faces, specifically whether Japanese and American people focus on different facial features.',
+    method: 'Participants from Japan and the USA were given a questionnaire showing 6 emoticons with mixed emotions — some had happy eyes with sad mouths, others had sad eyes with happy mouths. Participants rated each face from 1 (very sad) to 9 (very happy).',
+    results: 'Japanese participants gave higher happiness ratings to faces with happy eyes (even when the mouth was sad). American participants gave higher happiness ratings to faces with happy mouths. This suggests Japanese people rely more on the eyes to judge emotion, while Americans focus more on the mouth.',
+    conclusion: 'Cultural background affects which facial features people use to interpret emotions. This supports the idea that some aspects of non-verbal communication are culturally learned rather than universal.',
+    strength: 'Uses a controlled, standardised questionnaire making it easy to replicate. Has clear real-world applications for understanding cross-cultural communication.',
+    weakness: 'Using cartoon emoticons rather than real human faces reduces ecological validity. The study only compared two cultures, limiting generalisation.',
+    quizQuestions: [
+      { q: 'What was the aim of Yuki\'s (2007) emoticon study?', a: 'To investigate whether cultural background (Japanese vs American) affects which facial features people focus on when interpreting emotions.' },
+      { q: 'What did Yuki find about Japanese participants?', a: 'They focused more on the eyes — rating faces with happy eyes as happier, even when the mouth was sad.' },
+      { q: 'What did Yuki find about American participants?', a: 'They focused more on the mouth — rating faces with happy mouths as happier regardless of the eyes.' },
+      { q: 'What does Yuki\'s study suggest about non-verbal communication?', a: 'Some aspects of reading facial expressions are culturally learned — different cultures focus on different features to judge emotions.' },
+      { q: 'Give one weakness of Yuki\'s study.', a: 'Using cartoon emoticons rather than real faces reduces ecological validity — people may interpret real expressions differently.' }
+    ]
+  },
+
+  // ===== SOCIAL INFLUENCE (additional) =====
+  {
+    id: 'zimbardo1971',
+    name: 'Zimbardo (1971)',
+    topic: 'Social Influence',
+    topicEmoji: '👥',
+    topicColor: '#F9A8D4',
+    subtitle: 'Stanford Prison Experiment',
+    aim: 'To investigate whether people conform to assigned social roles, and whether situational factors explain cruel or abusive behaviour.',
+    method: '24 male university students were randomly assigned to play either guards or prisoners in a mock prison at Stanford University. Guards were given uniforms, batons and mirrored sunglasses. Prisoners were given numbers instead of names. Zimbardo acted as prison superintendent.',
+    results: 'The study was stopped after 6 days (planned for 2 weeks). Guards became increasingly cruel — humiliating prisoners and using psychological tactics. Prisoners became passive and distressed. Several had to be released early due to extreme emotional distress.',
+    conclusion: 'Ordinary people can commit acts of cruelty when given a powerful social role. Situational factors (the role, uniform, environment) were more powerful than personality in determining behaviour.',
+    strength: 'Powerfully demonstrated the influence of situational factors on behaviour. Has been influential in understanding institutional abuse and real prison reform.',
+    weakness: 'Major ethical issues — participants suffered real psychological harm. Zimbardo\'s own involvement as superintendent may have influenced guard behaviour, reducing validity.',
+    quizQuestions: [
+      { q: 'What was the aim of Zimbardo\'s Stanford Prison Experiment?', a: 'To investigate whether people conform to assigned social roles, and whether situational factors explain abusive behaviour.' },
+      { q: 'Why was the study stopped after only 6 days?', a: 'Guards had become increasingly cruel and abusive, and several prisoners suffered extreme emotional distress.' },
+      { q: 'What does Zimbardo\'s study suggest about the cause of cruel behaviour?', a: 'Situational factors (social roles, uniforms, environment) are more powerful than individual personality in causing cruel behaviour.' },
+      { q: 'Give one ethical issue with the Stanford Prison Experiment.', a: 'Participants suffered real psychological harm and were not adequately protected from distress — Zimbardo continued the study despite clear signs of harm.' },
+      { q: 'Give one weakness of Zimbardo\'s study.', a: 'Zimbardo himself acted as prison superintendent, meaning he was not an objective researcher — his involvement may have shaped how guards behaved.' }
+    ]
+  },
+
+  // ===== PSYCHOLOGICAL PROBLEMS (additional) =====
+  {
+    id: 'simonsmorton2010',
+    name: 'Simons-Morton & Farhat (2010)',
+    topic: 'Psychological Problems',
+    topicEmoji: '🌧️',
+    topicColor: '#5EEAD4',
+    subtitle: 'Peer Influence and Addiction',
+    aim: 'To investigate whether there is a relationship between peer influence and smoking behaviour in young people.',
+    method: 'A meta-analysis reviewing 40 different studies that had investigated the relationship between peer smoking behaviour and an individual\'s own smoking in adolescents.',
+    results: '39 out of 40 studies showed a positive correlation between peer smoking and individual smoking — suggesting having friends who smoke strongly predicts smoking oneself.',
+    conclusion: 'Peer influence is a significant factor in adolescent smoking and addiction. Young people are strongly influenced by the behaviour of their peers regarding substance use.',
+    strength: 'A meta-analysis of 40 studies provides a much larger and more representative evidence base than a single study, making conclusions more reliable.',
+    weakness: 'Correlational evidence only — cannot prove that peer influence causes smoking. Shared environmental factors or personality traits may explain the correlation.',
+    quizQuestions: [
+      { q: 'What type of study did Simons-Morton and Farhat conduct?', a: 'A meta-analysis — a review and analysis of 40 existing studies on peer influence and smoking.' },
+      { q: 'What did Simons-Morton and Farhat find?', a: '39 out of 40 studies showed a positive correlation between peer smoking and individual smoking — peer influence strongly predicts smoking in young people.' },
+      { q: 'Give one strength of a meta-analysis like Simons-Morton and Farhat\'s.', a: 'Reviewing 40 studies provides a much larger evidence base than a single study, making conclusions more reliable and generalisable.' },
+      { q: 'Give one weakness of Simons-Morton and Farhat\'s findings.', a: 'The evidence is correlational only — it shows a relationship but cannot prove peer influence causes smoking. Other shared factors may explain both.' },
+      { q: 'What practical implication does this study have?', a: 'It suggests that interventions to reduce adolescent smoking should target peer groups — helping young people resist peer pressure or changing social norms around smoking.' }
+    ]
   }
+
 ];
 
 function getStudyCategories() {
