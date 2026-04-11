@@ -1244,11 +1244,34 @@
   <div id="revisionScreen" class="screen">
     <div class="report-header">
       <h2>📚 Revision Hub</h2>
-      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Key studies and cases — learn them, then quiz yourself</p>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Studies and theories — learn them, then quiz yourself</p>
     </div>
+
+    <div class="section-label">🔬 Key Studies</div>
     <div id="revisionCategoryList"></div>
+
+    <div class="section-label" style="margin-top:24px">💡 Key Theories</div>
+    <div id="revisionTheoryCategoryList"></div>
+
     <div style="text-align:center;margin-top:16px">
       <button class="btn btn-secondary" onclick="showScreen('paperScreen')">← Back</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: THEORY LIST -->
+  <div id="theoryListScreen" class="screen">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <button class="btn btn-secondary" style="padding:8px 14px;font-size:0.82rem" onclick="showScreen('revisionScreen')">← Back</button>
+      <h2 style="font-family:'Fredoka One',cursive;font-size:1.4rem;margin:0" id="theoryListTitle">Theories</h2>
+    </div>
+    <div id="theoryListContent"></div>
+  </div>
+
+  <!-- SCREEN: THEORY QUIZ -->
+  <div id="theoryQuizScreen" class="screen">
+    <div class="study-quiz-area" id="theoryQuizArea"></div>
+    <div style="text-align:center">
+      <button class="btn btn-secondary" onclick="exitTheoryQuiz()">← Back to Theories</button>
     </div>
   </div>
 
@@ -2730,6 +2753,251 @@ const studyBank = [
 
 ];
 
+// ==========================================
+// THEORY BANK
+// ==========================================
+
+const theoryBank = [
+
+  // ===== MEMORY =====
+  {
+    id: 'msm',
+    name: 'Multi-Store Model of Memory',
+    theorist: 'Atkinson & Schiffrin (1968)',
+    topic: 'Memory',
+    topicEmoji: '🧩',
+    topicColor: '#A78BFA',
+    summary: 'Memory consists of three separate stores — the sensory register, short-term memory (STM) and long-term memory (LTM) — each with different capacities, durations and types of encoding. Information flows between stores through attention and rehearsal.',
+    detail: 'The sensory register receives all incoming information from the senses but holds it for less than a second. If we pay attention to it, it passes into STM which holds around 7±2 items for up to 30 seconds using mainly acoustic encoding. Through maintenance rehearsal (repeating information), it can be transferred into LTM, which has unlimited capacity and duration and uses mainly semantic (meaning-based) encoding. Without rehearsal, information is lost through decay or displacement.',
+    strength: 'Supported by research evidence — Baddeley (1966) showed STM and LTM use different types of encoding, and Murdock (1962) demonstrated the serial position effect (primacy = LTM, recency = STM). The model was hugely influential and generated decades of memory research.',
+    weakness: 'Oversimplifies memory — particularly STM. Baddeley and Hitch showed STM is not a single passive store but a complex working memory system. The model also overemphasises rehearsal — we can store things in LTM without deliberate rehearsal (e.g. emotional memories).',
+    quizQuestions: [
+      { q: 'What are the three stores in the Multi-Store Model and what order does information flow through them?', a: 'Sensory register → Short-term memory (STM) → Long-term memory (LTM). Information flows from one store to the next through attention (sensory to STM) and rehearsal (STM to LTM).' },
+      { q: 'What is the capacity and duration of short-term memory according to the MSM?', a: 'Capacity: approximately 7±2 items (Miller, 1956). Duration: up to 18-30 seconds without rehearsal.' },
+      { q: 'What type of encoding does STM mainly use, and what type does LTM mainly use?', a: 'STM mainly uses acoustic encoding (based on sound). LTM mainly uses semantic encoding (based on meaning). This was shown by Baddeley (1966).' },
+      { q: 'Give one strength of the Multi-Store Model.', a: 'It is supported by research evidence — Murdock\'s serial position curve shows items at the start (LTM) and end (STM) of lists are recalled best, supporting the idea of two separate stores.' },
+      { q: 'Give one weakness of the Multi-Store Model.', a: 'It oversimplifies STM — Baddeley and Hitch\'s Working Memory Model showed STM is actually a complex, multi-component system, not a single passive store.' }
+    ]
+  },
+
+  // ===== PERCEPTION =====
+  {
+    id: 'gibson_theory',
+    name: 'Gibson\'s Direct Theory of Perception',
+    theorist: 'James Gibson (1966)',
+    topic: 'Perception',
+    topicEmoji: '👁️',
+    topicColor: '#5EEAD4',
+    summary: 'Perception is direct — all the information we need to make sense of the world is contained in the sensory information we receive. We do not need prior knowledge, memory or experience to perceive the world accurately.',
+    detail: 'Gibson argued this is a bottom-up theory — processing starts with the sensory data itself. The optic array is the structured pattern of light that reaches our eyes from the environment. It contains all the information needed for perception, including optic flow patterns (how the visual field changes as we move) and motion parallax (closer objects move faster across our visual field). Gibson introduced the concept of affordances — the action possibilities that objects offer (e.g. a chair "affords" sitting). Gibson supported his theory with research using a visual cliff with babies and other animals.',
+    strength: 'Explains everyday perception well, particularly in rich, complex 3D environments with lots of sensory information available. Supported by Gibson\'s own research with pilots showing that optic flow provides enough information for accurate landing without conscious computation.',
+    weakness: 'Cannot explain visual illusions — if perception were purely bottom-up and direct, we should not be fooled by them. Also struggles to explain how perception can be influenced by context, emotion, and past experience, which Gregory\'s theory accounts for better.',
+    quizQuestions: [
+      { q: 'What does Gibson mean when he says perception is "direct"?', a: 'That all the information needed to perceive the world is contained in the sensory information itself (the optic array) — no past knowledge, memory or mental processing is required.' },
+      { q: 'What is the "optic array" in Gibson\'s theory?', a: 'The structured pattern of light that reaches our eyes from the environment. Gibson argued it contains all the information needed for accurate perception.' },
+      { q: 'What are "affordances" according to Gibson?', a: 'The action possibilities that objects or environments offer — what they allow us to do. For example, a door handle affords pulling, a chair affords sitting. Gibson believed these are directly perceived.' },
+      { q: 'Give one strength of Gibson\'s direct theory.', a: 'Explains everyday perception well, especially in rich 3D environments. It is supported by research with pilots showing optic flow patterns provide enough information for accurate navigation without conscious computation.' },
+      { q: 'Give one weakness of Gibson\'s direct theory.', a: 'Cannot explain visual illusions — if perception is direct and based purely on sensory data, we should never be tricked by illusions. Gregory\'s constructivist theory better accounts for why illusions occur.' }
+    ]
+  },
+
+  {
+    id: 'gregory_theory',
+    name: 'Gregory\'s Constructivist Theory of Perception',
+    theorist: 'Richard Gregory (1970)',
+    topic: 'Perception',
+    topicEmoji: '👁️',
+    topicColor: '#5EEAD4',
+    summary: 'Perception is an active, constructive process — the brain makes intelligent "hypotheses" (educated guesses) about what we are seeing, based on past experience and stored knowledge. Sensory information alone is often incomplete or ambiguous.',
+    detail: 'Gregory argued this is a top-down theory — the brain uses existing knowledge and expectations to interpret incoming sensory data. We do not passively receive information; we actively construct our perception. Perceptual hypotheses are our brain\'s best guesses about what an object is, based on context and prior experience. When a hypothesis is wrong, we experience a visual illusion. For example, the Muller-Lyer illusion occurs because we wrongly apply size constancy — our brain interprets the inward arrows as a corner going away from us, making the line appear longer.',
+    strength: 'Explains visual illusions well — if our perception is based on hypotheses built from past experience, it makes sense that those hypotheses can sometimes be wrong, leading to illusions. Also supported by perceptual set research (Bruner and Minturn, Hudson).',
+    weakness: 'Does not explain why we are still fooled by illusions even when we know they are illusions — if perception involves intelligent hypothesis-testing, we should be able to correct our perception once we know the truth. Also underestimates the richness of sensory information available.',
+    quizQuestions: [
+      { q: 'What does Gregory mean by a "perceptual hypothesis"?', a: 'An educated guess the brain makes about what it is seeing, based on past experience and stored knowledge. Perception is like a process of hypothesis-testing rather than a direct recording of reality.' },
+      { q: 'Is Gregory\'s theory top-down or bottom-up? What does this mean?', a: 'Top-down — processing is driven by existing knowledge and expectations in the brain, which are used to interpret incoming sensory data, rather than building up from raw sensory information alone.' },
+      { q: 'How does Gregory\'s theory explain the Muller-Lyer illusion?', a: 'We wrongly apply size constancy — our brain interprets the inward-pointing arrows as a corner receding away from us, so it scales up the line to compensate, making it appear longer than it is.' },
+      { q: 'Give one strength of Gregory\'s constructivist theory.', a: 'It explains visual illusions well — since perception involves hypothesis-testing based on past experience, it makes sense that our hypotheses are sometimes wrong, leading to predictable perceptual errors.' },
+      { q: 'Give one weakness of Gregory\'s constructivist theory.', a: 'Even when we know an illusion is false, we are still fooled by it — if perception involves intelligent hypothesis-testing, we should be able to correct our perception once we understand the trick.' }
+    ]
+  },
+
+  // ===== DEVELOPMENT =====
+  {
+    id: 'piaget_theory',
+    name: 'Piaget\'s Stage Theory of Cognitive Development',
+    theorist: 'Jean Piaget (1954)',
+    topic: 'Development',
+    topicEmoji: '🌱',
+    topicColor: '#F9A8D4',
+    summary: 'Children\'s thinking develops through four fixed, universal stages driven by biological maturation. Each stage involves qualitatively different ways of thinking. Key processes are assimilation (fitting new info into existing schemas) and accommodation (changing schemas to fit new info).',
+    detail: 'Sensorimotor (0-2): Babies learn through senses and actions. Object permanence develops around 8 months. Pre-operational (2-7): Language develops but thinking is egocentric and lacks logic. Children fail conservation tasks. Concrete operational (7-11): Logical thinking about concrete objects — conservation achieved. Decentration possible. Formal operational (11+): Abstract and hypothetical thinking possible. Children can think about possibilities beyond concrete reality. Schema, assimilation, accommodation and equilibration are the key mechanisms of development.',
+    strength: 'Hugely influential on education — his ideas about readiness shaped curriculum design. The concept of schemas, assimilation and accommodation are still widely used. His observations were detailed and systematic.',
+    weakness: 'McGarrigle and Donaldson (1974) showed children are more capable than Piaget thought — when tasks were made child-friendly and natural, younger children could conserve. Piaget may have underestimated children\'s abilities due to poorly designed tasks. Also, the stages may not be as fixed and universal as he claimed.',
+    quizQuestions: [
+      { q: 'Name Piaget\'s four stages of cognitive development in order, with age ranges.', a: 'Sensorimotor (0-2), Pre-operational (2-7), Concrete operational (7-11), Formal operational (11+).' },
+      { q: 'What is the difference between assimilation and accommodation in Piaget\'s theory?', a: 'Assimilation: fitting new information into an existing schema (e.g. calling a zebra a horse). Accommodation: changing an existing schema because new information does not fit (e.g. creating a new "zebra" schema).' },
+      { q: 'What is egocentrism and in which stage does it occur?', a: 'The inability to see the world from another person\'s perspective. Occurs in the pre-operational stage (2-7 years). Demonstrated by Piaget\'s three mountains task.' },
+      { q: 'Give one strength of Piaget\'s theory.', a: 'It has been hugely influential on education — the idea that children must be developmentally ready to learn certain concepts has shaped how schools structure the curriculum.' },
+      { q: 'Give one weakness of Piaget\'s theory.', a: 'McGarrigle and Donaldson (1974) showed children could conserve at younger ages when tasks were made more child-friendly — suggesting Piaget underestimated children\'s abilities due to confusing experimental tasks.' }
+    ]
+  },
+
+  // ===== SOCIAL INFLUENCE =====
+  {
+    id: 'nsi_isi',
+    name: 'Types of Conformity — NSI and ISI',
+    theorist: 'Deutsch & Gerard (1955)',
+    topic: 'Social Influence',
+    topicEmoji: '👥',
+    topicColor: '#F9A8D4',
+    summary: 'There are two main reasons why people conform: Normative Social Influence (NSI) — conforming to be liked and accepted — and Informational Social Influence (ISI) — conforming because we genuinely believe the group knows better than us.',
+    detail: 'Normative Social Influence (NSI) occurs when we conform to avoid rejection and gain social approval. We change our public behaviour but not necessarily our private beliefs — this is compliance. NSI is most likely when we care about social acceptance and when the group can observe our behaviour. Informational Social Influence (ISI) occurs when we are uncertain about the right answer and look to others for guidance. We genuinely believe the group is correct and so privately change our views — this is internalisation. ISI is most likely in ambiguous situations or when others are seen as experts.',
+    strength: 'Supported by research. Asch\'s line study shows NSI — participants conformed even when the answer was obvious, suggesting social pressure rather than genuine uncertainty. Sherif\'s autokinetic effect study shows ISI — participants in an ambiguous situation converged on a group norm, suggesting genuine belief change.',
+    weakness: 'The distinction between NSI and ISI is not always clear in practice — in real situations, both types of influence often operate simultaneously and it is difficult to separate them. People may be unaware of which type is influencing them.',
+    quizQuestions: [
+      { q: 'What is Normative Social Influence (NSI)?', a: 'Conforming to gain social approval and avoid rejection. We change our public behaviour to fit in with the group but do not necessarily change our private beliefs. This leads to compliance.' },
+      { q: 'What is Informational Social Influence (ISI)?', a: 'Conforming because we genuinely believe the group knows better than us. We look to others for guidance in ambiguous situations and privately change our beliefs. This leads to internalisation.' },
+      { q: 'In what type of situation is ISI most likely to occur?', a: 'In ambiguous situations where we are unsure of the correct answer, or when we are with people we perceive as experts. We rely on others as an information source.' },
+      { q: 'Which type of conformity did Asch\'s line study mainly demonstrate? Why?', a: 'NSI — participants conformed even when the answer was obviously wrong, suggesting they were driven by the desire to fit in rather than genuine uncertainty about the correct answer.' },
+      { q: 'Give one weakness of the NSI/ISI distinction.', a: 'In real life the two types often operate simultaneously, making it difficult to separate their effects. People may also be unaware of which type is influencing their behaviour.' }
+    ]
+  },
+
+  {
+    id: 'agency_theory',
+    name: 'Milgram\'s Agency Theory',
+    theorist: 'Stanley Milgram (1974)',
+    topic: 'Social Influence',
+    topicEmoji: '👥',
+    topicColor: '#F9A8D4',
+    summary: 'People obey authority figures because they enter an "agentic state" — they see themselves as agents acting on behalf of the authority, rather than autonomous individuals responsible for their own actions.',
+    detail: 'Milgram proposed that people can be in one of two states. In the autonomous state, a person acts according to their own conscience and takes personal responsibility for their actions. In the agentic state, a person sees themselves as an instrument of authority — they follow orders and feel that responsibility for the consequences lies with the authority figure, not with them. Agentic shift is the transition from autonomous to agentic state, which tends to occur when we encounter a legitimate authority figure in a hierarchical social structure. Factors that maintain the agentic state include the physical presence of the authority figure, the legitimacy of the authority, and buffers that distance the individual from the consequences of their actions.',
+    strength: 'Explains why ordinary, decent people can commit atrocities when ordered to by authority — e.g. Nazi soldiers during WWII. Explains variations in obedience found in Milgram\'s own experiments (obedience dropped when the authority figure\'s legitimacy was reduced).',
+    weakness: 'Does not fully explain why some people resist even legitimate authority. Some critics argue it is too deterministic — it implies people have little control over their behaviour in authority situations, when in fact many people do resist.',
+    quizQuestions: [
+      { q: 'What is the "agentic state" according to Milgram?', a: 'A psychological state in which a person sees themselves as an agent acting on behalf of an authority figure. They feel no personal responsibility for their actions — responsibility is passed to the authority.' },
+      { q: 'What is the "autonomous state" in Milgram\'s agency theory?', a: 'When a person acts according to their own conscience and values, and takes personal responsibility for their behaviour. This is the opposite of the agentic state.' },
+      { q: 'What is "agentic shift"?', a: 'The transition from an autonomous state to an agentic state. This typically occurs when a person encounters a legitimate authority figure in a hierarchical situation.' },
+      { q: 'Give one strength of Milgram\'s agency theory.', a: 'It helps explain how ordinary people can commit atrocities under orders — for example, the behaviour of soldiers following orders during wartime — giving the theory important real-world explanatory power.' },
+      { q: 'Give one weakness of Milgram\'s agency theory.', a: 'It does not explain why some people resist authority even in agentic situations. The theory is overly deterministic and underestimates individual differences in resistance to obedience.' }
+    ]
+  },
+
+  // ===== LANGUAGE, THOUGHT & COMMUNICATION =====
+  {
+    id: 'sapir_whorf',
+    name: 'Sapir-Whorf Hypothesis (Linguistic Relativity)',
+    theorist: 'Sapir & Whorf (1929)',
+    topic: 'Language, Thought & Communication',
+    topicEmoji: '💬',
+    topicColor: '#FDE68A',
+    summary: 'The language we speak influences (or even determines) how we think and perceive the world. Different languages carve up reality in different ways, leading speakers of different languages to think about the world differently.',
+    detail: 'The strong version — linguistic determinism — argues that language determines thought: we can only think about things for which we have words. The weak version — linguistic relativity — argues that language merely influences thought: having more or fewer words for something makes it easier or harder to think about. Evidence includes studies of colour perception — languages with more colour terms lead to faster and more accurate colour discrimination. Another example is the Hopi people, who lack tenses in their language — Whorf argued this affected how they perceived time. Carmichael et al. (1932) showed that the label given to an ambiguous drawing affected how participants later reproduced it.',
+    strength: 'Has real-world support — studies on colour perception show that people who speak languages with more colour terms are faster at distinguishing similar colours, suggesting language does influence cognitive processing.',
+    weakness: 'The strong version (linguistic determinism) has been widely rejected — people can clearly think about things they do not have words for (e.g. pre-linguistic babies have concepts before language). Also, Boas may have exaggerated differences between languages in early supporting evidence.',
+    quizQuestions: [
+      { q: 'What is the Sapir-Whorf hypothesis?', a: 'The idea that the language we speak influences or determines how we think and perceive the world. Different languages structure reality differently, which affects cognition.' },
+      { q: 'What is the difference between linguistic determinism and linguistic relativity?', a: 'Linguistic determinism (strong version): language determines thought — we can only think what our language allows. Linguistic relativity (weak version): language merely influences thought, making some ideas easier or harder to think about.' },
+      { q: 'Give one piece of evidence that supports the Sapir-Whorf hypothesis.', a: 'Colour perception studies — speakers of languages with more colour terms are faster and more accurate at distinguishing similar colours, suggesting language influences how we process colour.' },
+      { q: 'Give one weakness of the Sapir-Whorf hypothesis.', a: 'The strong version has been widely rejected — pre-linguistic babies clearly have concepts before they have language, showing that thought does not require language and language cannot fully determine thought.' },
+      { q: 'How does Carmichael et al.\'s (1932) study support the Sapir-Whorf hypothesis?', a: 'Participants given different labels for ambiguous drawings later reproduced the drawings differently — the language used to describe the image influenced how it was remembered, supporting the idea that language affects cognition.' }
+    ]
+  },
+
+  // ===== BRAIN & NEUROPSYCHOLOGY =====
+  {
+    id: 'localisation',
+    name: 'Localisation of Brain Function',
+    theorist: 'Various (Broca, Wernicke, Penfield)',
+    topic: 'Brain & Neuropsychology',
+    topicEmoji: '🧬',
+    topicColor: '#A78BFA',
+    summary: 'Different areas of the brain are responsible for different psychological and physical functions. Specific regions have been identified for motor control, sensory processing, language, vision, and hearing.',
+    detail: 'The motor area (back of the frontal lobe) controls voluntary movement. Contralateral control means the right motor cortex controls the left side of the body and vice versa. The somatosensory area processes sensory information — more sensitive body parts (hands, face) take up more space. The visual area is in the occipital lobe — information from the right visual field goes to the left cortex. The auditory area is in the temporal lobe. Broca\'s area (left frontal lobe) controls speech production — damage causes Broca\'s aphasia (can understand but not produce fluent speech). Wernicke\'s area (left temporal lobe) controls language comprehension — damage causes Wernicke\'s aphasia (can produce speech but it lacks meaning).',
+    strength: 'Strongly supported by case studies (Phineas Gage — frontal lobe damage changed personality) and brain scanning research (fMRI confirms specific areas activate for specific tasks). Penfield\'s electrical stimulation research directly mapped functions to brain regions.',
+    weakness: 'The brain shows considerable plasticity — functions can shift to other areas after damage, particularly in children. This challenges a strict localisation view. Also, many complex functions (e.g. memory, emotion) involve networks of areas rather than a single location.',
+    quizQuestions: [
+      { q: 'What is "localisation of function" in the brain?', a: 'The idea that specific areas of the brain are responsible for specific functions — for example, the motor area controls movement, the visual area processes sight, and Broca\'s area controls speech production.' },
+      { q: 'What is "contralateral control"?', a: 'The left hemisphere of the brain controls the right side of the body, and the right hemisphere controls the left side. This crossing over is a key feature of the motor and somatosensory cortex.' },
+      { q: 'What is the difference between Broca\'s aphasia and Wernicke\'s aphasia?', a: 'Broca\'s aphasia: damage to Broca\'s area (left frontal lobe) — can understand language but cannot produce fluent speech. Wernicke\'s aphasia: damage to Wernicke\'s area (left temporal lobe) — can produce speech but it lacks meaning or coherence.' },
+      { q: 'Give one strength of the localisation of function theory.', a: 'Strongly supported by evidence — Penfield\'s electrical stimulation studies directly mapped functions to brain regions, and fMRI scanning confirms that specific areas consistently activate during specific tasks.' },
+      { q: 'Give one weakness of the localisation of function theory.', a: 'The brain shows neuroplasticity — after damage, other areas can sometimes take over functions, particularly in children. This challenges the idea that functions are strictly and permanently localised.' }
+    ]
+  },
+
+  {
+    id: 'hebb_theory',
+    name: 'Hebb\'s Theory of Learning and Neuronal Growth',
+    theorist: 'Donald Hebb (1949)',
+    topic: 'Brain & Neuropsychology',
+    topicEmoji: '🧬',
+    topicColor: '#A78BFA',
+    summary: 'The brain is like a muscle — the more we use neural pathways, the stronger they become. Learning creates new synaptic connections and leaves a physical trace in the brain called an engram.',
+    detail: 'Hebb\'s key principle is often summarised as: "neurons that fire together, wire together." When two neurons are repeatedly activated at the same time, the synaptic connection between them strengthens. This process is called long-term potentiation. When we learn something new, new synaptic connections are formed. When the synaptic knob becomes larger through repeated activation, transmission becomes more efficient. An engram is the physical memory trace left in the brain by learning — it can become permanent if reinforced through rehearsal and practice. During learning, groups of neurons called cell assemblies fire together, and the more they fire together, the more efficiently they work as a unit.',
+    strength: 'Supported by modern neuroscience — long-term potentiation (LTP) has been demonstrated in laboratory research, confirming that repeated neural activity does strengthen synaptic connections. Explains why practice and repetition improve performance.',
+    weakness: 'Hebb\'s original theory was based on limited neurological knowledge — the mechanisms he proposed are more complex than he realised. Also, the theory focuses on how memories are formed physically but does not explain which memories are stored or why some experiences are more memorable than others.',
+    quizQuestions: [
+      { q: 'What is the key principle of Hebb\'s theory, often summarised as "neurons that fire together..."?', a: '"Neurons that fire together, wire together." When two neurons are repeatedly activated at the same time, the synaptic connection between them strengthens, making transmission more efficient.' },
+      { q: 'What is an "engram" in Hebb\'s theory?', a: 'A physical memory trace left in the brain by learning. The engram can become permanent if the learning is reinforced through rehearsal and practice.' },
+      { q: 'How does Hebb\'s theory explain why practice improves performance?', a: 'Each time we practise, the relevant neural pathways are activated. Repeated activation strengthens the synaptic connections, making transmission more efficient — so the skill becomes easier and more automatic over time.' },
+      { q: 'Give one strength of Hebb\'s theory.', a: 'Supported by modern neuroscience — long-term potentiation (LTP) has been demonstrated in laboratory research, confirming that repeated neural activation does strengthen synaptic connections, as Hebb predicted.' },
+      { q: 'Give one weakness of Hebb\'s theory.', a: 'The theory does not explain which memories are stored or why some experiences are more memorable than others — it focuses on the physical mechanism of memory formation but not on what determines memory selectivity.' }
+    ]
+  },
+
+  // ===== PSYCHOLOGICAL PROBLEMS =====
+  {
+    id: 'definitions_abnormality',
+    name: 'Definitions of Abnormality',
+    theorist: 'Various (Rosenhan, Jahoda, 1958)',
+    topic: 'Psychological Problems',
+    topicEmoji: '🌧️',
+    topicColor: '#5EEAD4',
+    summary: 'There are four main ways to define abnormal behaviour: statistical infrequency, deviation from social norms, failure to function adequately, and deviation from ideal mental health. Each has strengths and limitations.',
+    detail: 'Statistical infrequency: behaviour that is statistically rare (e.g. IQ below 70). Clear and objective but rare is not always abnormal (e.g. genius). Deviation from social norms: behaviour that breaks the unwritten rules of society (e.g. wearing pyjamas to work). Culturally variable — what is normal in one culture may be abnormal in another. Failure to function adequately: when behaviour stops someone living a normal daily life — causes distress or prevents functioning. Captures suffering but some disorders (e.g. mania) don\'t cause distress. Deviation from ideal mental health (Jahoda, 1958): absence of positive characteristics such as self-acceptance, personal growth, autonomy, environmental mastery, accurate reality perception, and resistance to stress.',
+    strength: 'Using multiple definitions together gives a more complete picture than any single definition alone — if behaviour meets several criteria simultaneously, we can be more confident it is genuinely disordered.',
+    weakness: 'All definitions are culturally relative — what counts as abnormal depends on time, place and culture. Behaviour once classified as a disorder (e.g. homosexuality) may later be seen as normal. This means no single definition is universal or objective.',
+    quizQuestions: [
+      { q: 'Name the four definitions of abnormality.', a: '1. Statistical infrequency (behaviour is rare). 2. Deviation from social norms (breaks unwritten social rules). 3. Failure to function adequately (prevents normal daily life). 4. Deviation from ideal mental health (Jahoda — lacks positive wellbeing).' },
+      { q: 'What is one limitation of the "statistical infrequency" definition?', a: 'Some statistically rare behaviours are actually positive — for example, extremely high intelligence is rare but clearly not a disorder. The definition says nothing about whether the behaviour causes distress or impairment.' },
+      { q: 'What are Jahoda\'s (1958) criteria for ideal mental health?', a: 'Self-acceptance, personal growth, autonomy (independence), environmental mastery, accurate perception of reality, and resistance to stress. Absence of these characteristics indicates abnormality.' },
+      { q: 'Why is "deviation from social norms" a culturally relative definition?', a: 'Social norms vary across cultures and historical periods — behaviour considered abnormal in one culture may be perfectly normal in another. This means the definition cannot be applied universally.' },
+      { q: 'Give one strength of using multiple definitions of abnormality together.', a: 'Using several definitions together gives a more complete picture — if behaviour meets multiple criteria (e.g. statistically rare AND causes distress AND prevents functioning), we can be more confident it is genuinely disordered.' }
+    ]
+  },
+
+  {
+    id: 'biological_depression',
+    name: 'Biological Explanation of Depression',
+    theorist: 'Various (biological approach)',
+    topic: 'Psychological Problems',
+    topicEmoji: '🌧️',
+    topicColor: '#5EEAD4',
+    summary: 'Depression is caused by biological factors — particularly imbalances in neurotransmitters (especially serotonin and noradrenaline), genetic predisposition, and abnormal brain structure or function.',
+    detail: 'The neurotransmitter explanation suggests that depression is linked to low levels of serotonin and noradrenaline in the brain. Serotonin regulates mood, sleep and appetite. SSRIs (Selective Serotonin Reuptake Inhibitors) treat depression by preventing serotonin being reabsorbed, leaving more available in the synapse. Evidence for genetic factors comes from twin studies — concordance rates are higher in identical twins than non-identical twins, suggesting a genetic component. Symptoms of depression include persistent low mood, loss of interest, fatigue, sleep and appetite changes, reduced self-confidence, and in severe cases, thoughts of self-harm.',
+    strength: 'Supported by the effectiveness of antidepressant drugs (SSRIs) — if depression responds to medication that alters neurotransmitter levels, this suggests a biological basis. Twin studies also provide evidence for genetic contributions.',
+    weakness: 'Not all people with low serotonin develop depression, and some depressed people do not have low serotonin — the relationship is more complex than a simple imbalance. SSRIs also take weeks to work despite raising serotonin levels quickly, which challenges the simple neurotransmitter explanation.',
+    quizQuestions: [
+      { q: 'According to the biological explanation, what causes depression?', a: 'Imbalances in neurotransmitters (particularly low serotonin and noradrenaline), genetic predisposition, and possibly abnormal brain structure or function.' },
+      { q: 'How do SSRIs treat depression according to the biological explanation?', a: 'SSRIs (Selective Serotonin Reuptake Inhibitors) prevent serotonin from being reabsorbed back into the neuron after release, leaving more serotonin available in the synapse to regulate mood.' },
+      { q: 'What evidence from twin studies supports the biological explanation of depression?', a: 'Concordance rates for depression are higher in identical twins (who share 100% of genes) than non-identical twins (who share ~50%), suggesting a genetic component to depression.' },
+      { q: 'Give one strength of the biological explanation of depression.', a: 'Supported by the effectiveness of antidepressant drugs — the fact that SSRIs relieve depression symptoms by altering neurotransmitter levels provides evidence that biology plays a role in causing depression.' },
+      { q: 'Give one weakness of the biological explanation of depression.', a: 'Not all people with low serotonin develop depression — the relationship is not straightforward. Depression is likely caused by a combination of biological and psychological factors, not biology alone.' }
+    ]
+  },
+
+
+];
+
+function getTheoryCategories() {
+  const cats = {};
+  theoryBank.forEach(t => {
+    if (!cats[t.topic]) cats[t.topic] = { emoji: t.topicEmoji, color: t.topicColor, theories: [] };
+    cats[t.topic].theories.push(t);
+  });
+  return cats;
+}
+
 function getStudyCategories() {
   const cats = {};
   studyBank.forEach(s => {
@@ -2756,7 +3024,241 @@ function showRevisionHub() {
       <div style="color:var(--text-muted)">›</div>
     </div>
   `).join('');
+
+  const tcats = getTheoryCategories();
+  const tlist = document.getElementById('revisionTheoryCategoryList');
+  tlist.innerHTML = Object.entries(tcats).map(([topic, data]) => `
+    <div class="revision-category" onclick="showTheoryList('${topic}')">
+      <div class="revision-category-emoji">${data.emoji}</div>
+      <div class="revision-category-info">
+        <div class="revision-category-name">${topic}</div>
+        <div class="revision-category-count">${data.theories.length} theories</div>
+      </div>
+      <div style="color:var(--text-muted)">›</div>
+    </div>
+  `).join('');
+
   showScreen('revisionScreen');
+}
+
+function showTheoryList(topic) {
+  const cats = getTheoryCategories();
+  const data = cats[topic];
+  document.getElementById('theoryListTitle').textContent = `${data.emoji} ${topic}`;
+
+  const html = data.theories.map(theory => `
+    <div class="study-card" id="tcard-${theory.id}">
+      <div class="study-card-header" onclick="toggleTheoryCard('${theory.id}')">
+        <div style="font-size:1.5rem">${theory.topicEmoji}</div>
+        <div class="study-card-title">
+          <div class="study-card-name">${theory.name}</div>
+          <div class="study-card-sub">${theory.theorist}</div>
+        </div>
+        <div class="study-card-chevron">▼</div>
+      </div>
+      <div class="study-card-body">
+        <div class="study-section">
+          <div class="study-section-title">📋 Summary</div>
+          <div class="study-section-body">${theory.summary}</div>
+        </div>
+        <div class="study-section">
+          <div class="study-section-title">🔍 In Detail</div>
+          <div class="study-section-body">${theory.detail}</div>
+        </div>
+        <div class="study-section">
+          <div class="study-section-title">⚖️ Evaluation</div>
+          <div class="study-eval">
+            <div class="study-eval-box strength">
+              <div class="study-eval-label">✅ Strength</div>
+              ${theory.strength}
+            </div>
+            <div class="study-eval-box weakness">
+              <div class="study-eval-label">❌ Weakness</div>
+              ${theory.weakness}
+            </div>
+          </div>
+        </div>
+        <button class="study-quiz-btn" onclick="startTheoryQuiz('${theory.id}')">🧠 Quiz me on this theory!</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('theoryListContent').innerHTML = html;
+  showScreen('theoryListScreen');
+}
+
+function toggleTheoryCard(id) {
+  const card = document.getElementById('tcard-' + id);
+  card.classList.toggle('open');
+}
+
+// ==========================================
+// THEORY QUIZ
+// ==========================================
+
+let theoryQuizState = { theory: null, questions: [], index: 0, score: 0 };
+
+function startTheoryQuiz(theoryId) {
+  const theory = theoryBank.find(t => t.id === theoryId);
+  if (!theory) return;
+  const qs = [...theory.quizQuestions].sort(() => Math.random() - 0.5);
+  theoryQuizState = { theory, questions: qs, index: 0, score: 0 };
+  renderTheoryQuizQuestion();
+  showScreen('theoryQuizScreen');
+}
+
+function renderTheoryQuizQuestion() {
+  const { theory, questions, index, score } = theoryQuizState;
+  const area = document.getElementById('theoryQuizArea');
+
+  if (index >= questions.length) {
+    const pct = Math.round((score / questions.length) * 100);
+    const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '🎉' : '💪';
+    const scoreDisplay = Number.isInteger(score) ? score : score.toFixed(1);
+    area.innerHTML = `
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:3rem;margin-bottom:12px">${emoji}</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--yellow);margin-bottom:4px">${scoreDisplay} / ${questions.length}</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:4px">${pct}% — ${pct >= 80 ? 'Excellent!' : pct >= 60 ? 'Good effort!' : 'Keep practising!'}</div>
+        <div style="color:var(--text-muted);font-size:0.82rem;margin-bottom:24px">${theory.name}</div>
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn btn-primary" onclick="startTheoryQuiz('${theory.id}')">🔄 Try again</button>
+          <button class="btn btn-secondary" onclick="showTheoryList('${theory.topic}')">← Back to theories</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const q = questions[index];
+  area.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-size:0.8rem;color:var(--text-muted)">${theory.name}</span>
+      <span style="font-size:0.8rem;color:var(--text-muted)">${index + 1} / ${questions.length}</span>
+    </div>
+    <div style="font-size:1rem;font-weight:700;line-height:1.6;margin-bottom:16px">${q.q}</div>
+    <div id="tqRevealArea">
+      <textarea id="tqAnswerInput"
+        placeholder="Type your answer here..."
+        style="width:100%;min-height:110px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;line-height:1.6;resize:vertical;box-sizing:border-box;margin-bottom:12px"
+      ></textarea>
+      <button class="btn btn-primary" style="width:100%" onclick="submitTheoryAnswer()">🤖 Submit for marking</button>
+    </div>`;
+}
+
+async function submitTheoryAnswer() {
+  const { theory, questions, index } = theoryQuizState;
+  const q = questions[index];
+  const answer = document.getElementById('tqAnswerInput').value.trim();
+
+  if (!answer || answer.length < 5) {
+    document.getElementById('tqAnswerInput').style.borderColor = 'var(--red-light)';
+    return;
+  }
+
+  const area = document.getElementById('tqRevealArea');
+  area.innerHTML = `
+    <div style="text-align:center;padding:20px;color:var(--text-muted)">
+      <div class="dot-spin" style="justify-content:center;margin-bottom:8px"><span></span><span></span><span></span></div>
+      🤖 Marking your answer...
+    </div>`;
+
+  const usageCheck = await checkAndIncrementUsage();
+  if (!usageCheck.allowed) {
+    area.innerHTML = `
+      <div style="background:rgba(245,158,11,0.1);border:1px solid var(--yellow);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:8px">⚠️</div>
+        <div style="font-weight:700;margin-bottom:6px">AI marking limit reached</div>
+        <div style="font-size:0.85rem;color:var(--text-muted)">${usageCheck.reason}</div>
+      </div>
+      <button class="btn btn-secondary" style="width:100%" onclick="theoryQuizAnswer(0)">→ Skip this question</button>`;
+    return;
+  }
+
+  try {
+    const response = await fetch('https://psych-proxy.benmsalmon.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 500,
+        messages: [{
+          role: 'user',
+          content: `You are marking a GCSE Psychology student's answer about a psychological theory. Be specific, encouraging and honest.
+
+QUESTION: ${q.q}
+
+MODEL ANSWER: ${q.a}
+
+STUDENT'S ANSWER: ${answer}
+
+Compare the student's answer to the model answer carefully. Then respond in EXACTLY this format:
+
+MARK: [write exactly one of: CORRECT / PARTIAL / INCORRECT]
+
+SCORE: [write a fraction like 1/1 or 0.5/1 or 0/1]
+
+WHAT YOU GOT RIGHT: [one specific thing they did well — even if incorrect, find something positive. If nothing, say "You attempted the question."]
+
+WHAT TO IMPROVE: [one specific thing missing or wrong compared to the model answer]
+
+KEY POINT TO REMEMBER: [one memorable sentence to help them recall this for the exam]`
+        }]
+      })
+    });
+
+    if (!response.ok) throw new Error(`API error ${response.status}`);
+    const data = await response.json();
+    const feedback = data.content?.[0]?.text || '';
+    if (!feedback) throw new Error('Empty response');
+
+    const markMatch = feedback.match(/MARK:\s*(CORRECT|PARTIAL|INCORRECT)/i);
+    const rightMatch = feedback.match(/WHAT YOU GOT RIGHT:\s*([^\n]+)/i);
+    const improveMatch = feedback.match(/WHAT TO IMPROVE:\s*([^\n]+)/i);
+    const keyMatch = feedback.match(/KEY POINT TO REMEMBER:\s*([^\n]+)/i);
+
+    const mark = markMatch ? markMatch[1].toUpperCase() : 'PARTIAL';
+    const gotRight = rightMatch ? rightMatch[1].trim() : '';
+    const improve = improveMatch ? improveMatch[1].trim() : '';
+    const keyPoint = keyMatch ? keyMatch[1].trim() : '';
+    const points = mark === 'CORRECT' ? 1 : mark === 'PARTIAL' ? 0.5 : 0;
+
+    const markConfig = {
+      CORRECT:   { emoji: '✅', label: 'Correct!',        bg: 'rgba(16,185,129,0.12)',  border: 'var(--green)',     color: 'var(--green)' },
+      PARTIAL:   { emoji: '⚠️', label: 'Partially right', bg: 'rgba(245,158,11,0.12)',  border: 'var(--yellow)',    color: 'var(--yellow)' },
+      INCORRECT: { emoji: '❌', label: 'Needs more work', bg: 'rgba(239,68,68,0.12)',   border: 'var(--red-light)', color: 'var(--red-light)' }
+    };
+    const cfg = markConfig[mark] || markConfig.PARTIAL;
+
+    area.innerHTML = `
+      <div style="background:${cfg.bg};border:1.5px solid ${cfg.border};border-radius:14px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:${cfg.color};margin-bottom:12px">${cfg.emoji} ${cfg.label}</div>
+        ${gotRight ? `<div style="margin-bottom:10px;font-size:0.88rem;line-height:1.6"><strong style="color:var(--green)">✅ What you got right:</strong><br>${gotRight}</div>` : ''}
+        ${improve ? `<div style="margin-bottom:10px;font-size:0.88rem;line-height:1.6"><strong style="color:var(--yellow)">📝 To improve:</strong><br>${improve}</div>` : ''}
+        ${keyPoint ? `<div style="font-size:0.88rem;line-height:1.6;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px"><strong style="color:var(--purple-light)">🧠 Key point:</strong><br>${keyPoint}</div>` : ''}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:14px;font-size:0.82rem;line-height:1.6">
+        <strong style="color:var(--text-muted)">Model answer:</strong><br><br>${q.a}
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="theoryQuizAnswer(${points})">Next question →</button>`;
+
+  } catch(e) {
+    area.innerHTML = `
+      <div style="background:rgba(239,68,68,0.1);border:1px solid var(--red-light);border-radius:12px;padding:14px;margin-bottom:14px;font-size:0.85rem">
+        <strong>⚠️ AI marking failed</strong><br>
+        <span style="color:var(--text-muted);font-size:0.8rem">${e.message}</span>
+      </div>
+      <button class="btn btn-secondary" style="width:100%" onclick="theoryQuizAnswer(0)">→ Skip this question</button>`;
+  }
+}
+
+function theoryQuizAnswer(points) {
+  theoryQuizState.score += (points || 0);
+  theoryQuizState.index++;
+  renderTheoryQuizQuestion();
+}
+
+function exitTheoryQuiz() {
+  showTheoryList(theoryQuizState.theory.topic);
 }
 
 function showStudyList(topic) {
