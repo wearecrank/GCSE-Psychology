@@ -922,6 +922,100 @@
     min-width: 44px;
   }
 
+  /* ========== REVISION HUB ========== */
+  .revision-category {
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .revision-category:hover { border-color: var(--yellow); transform: translateY(-2px); }
+  .revision-category-emoji { font-size: 1.8rem; flex-shrink: 0; }
+  .revision-category-info { flex: 1; }
+  .revision-category-name { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: var(--yellow); }
+  .revision-category-count { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+  .study-card {
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .study-card-header {
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .study-card-header:hover { background: rgba(255,255,255,0.03); }
+  .study-card-title { flex: 1; }
+  .study-card-name { font-weight: 700; font-size: 0.95rem; }
+  .study-card-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+  .study-card-chevron { color: var(--text-muted); font-size: 0.9rem; transition: transform 0.2s; }
+  .study-card.open .study-card-chevron { transform: rotate(180deg); }
+
+  .study-card-body { display: none; padding: 0 16px 16px; }
+  .study-card.open .study-card-body { display: block; }
+
+  .study-section { margin-bottom: 14px; }
+  .study-section-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .study-section-body {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .study-eval { display: flex; gap: 8px; }
+  .study-eval-box {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+  .study-eval-box.strength { border-left: 3px solid var(--green); }
+  .study-eval-box.weakness { border-left: 3px solid var(--red-light); }
+  .study-eval-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+  .study-eval-box.strength .study-eval-label { color: var(--green); }
+  .study-eval-box.weakness .study-eval-label { color: var(--red-light); }
+
+  .study-quiz-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .study-quiz-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
+
+  /* Study Quiz Screen */
+  .study-quiz-area { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 16px; }
+
   /* ========== PAPER PICKER ========== */
   .paper-picker {
     display: flex;
@@ -1104,6 +1198,35 @@
     </div>
   </div>
 
+  <!-- SCREEN: REVISION HUB -->
+  <div id="revisionScreen" class="screen">
+    <div class="report-header">
+      <h2>📚 Revision Hub</h2>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Key studies and cases — learn them, then quiz yourself</p>
+    </div>
+    <div id="revisionCategoryList"></div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn btn-secondary" onclick="showScreen('paperScreen')">← Back</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: STUDY LIST (for a category) -->
+  <div id="studyListScreen" class="screen">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <button class="btn btn-secondary" style="padding:8px 14px;font-size:0.82rem" onclick="showScreen('revisionScreen')">← Back</button>
+      <h2 style="font-family:'Fredoka One',cursive;font-size:1.4rem;margin:0" id="studyListTitle">Studies</h2>
+    </div>
+    <div id="studyListContent"></div>
+  </div>
+
+  <!-- SCREEN: STUDY QUIZ -->
+  <div id="studyQuizScreen" class="screen">
+    <div class="study-quiz-area" id="studyQuizArea"></div>
+    <div style="text-align:center">
+      <button class="btn btn-secondary" onclick="exitStudyQuiz()">🏠 Back to Studies</button>
+    </div>
+  </div>
+
   <!-- SCREEN: PAPER PICKER -->
   <div id="paperScreen" class="screen active">
     <div style="text-align:center;padding:30px 0 10px">
@@ -1122,6 +1245,14 @@
         <div class="paper-btn-title" style="color:var(--teal-light)">Paper 2</div>
         <div class="paper-btn-topics">Social Influence · Language, Thought & Communication · Brain & Neuropsychology · Psychological Problems</div>
         <div class="paper-btn-emoji">📘</div>
+      </button>
+    </div>
+    <div style="margin-top:16px">
+      <button class="paper-btn" style="width:100%;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.08));border-color:rgba(245,158,11,0.4)" onclick="showRevisionHub()">
+        <div class="paper-btn-tag" style="background:rgba(245,158,11,0.2);color:var(--yellow)">📚 Studies & Cases</div>
+        <div class="paper-btn-title" style="color:var(--yellow)">Revision Hub</div>
+        <div class="paper-btn-topics">Learn about key studies — read the details, then test yourself</div>
+        <div class="paper-btn-emoji">🔬</div>
       </button>
     </div>
   </div>
@@ -1857,6 +1988,687 @@ async function openAdminReport() {
 }
 
 
+
+// ==========================================
+// REVISION HUB — Key Studies Bank
+// ==========================================
+
+const studyBank = [
+
+  // ===== MEMORY =====
+  {
+    id: 'murdock1962',
+    name: 'Murdock (1962)',
+    topic: 'Memory',
+    topicEmoji: '🧩',
+    topicColor: '#A78BFA',
+    subtitle: 'Serial Position Effect',
+    aim: 'To investigate whether the position of a word in a list affects how well it is remembered.',
+    method: 'Participants were read lists of words at a rate of one per second. They were then asked to recall as many words as possible in any order (free recall). Lists varied in length from 10 to 40 words.',
+    results: 'Participants recalled words from the beginning (primacy effect) and end (recency effect) of the list best. Words from the middle were recalled least well. This produced a characteristic U-shaped "serial position curve".',
+    conclusion: 'The primacy effect occurs because early words have been rehearsed into long-term memory. The recency effect occurs because the last words are still in short-term memory at the time of recall. Words in the middle receive less rehearsal and are displaced from STM.',
+    strength: 'It is a well-controlled laboratory experiment, making it highly replicable. The serial position curve has been replicated many times, giving the findings high reliability.',
+    weakness: 'The use of word lists lacks ecological validity — we rarely need to recall random lists in everyday life, so findings may not generalise to real memory tasks.',
+    quizQuestions: [
+      { q: 'What was the aim of Murdock\'s (1962) study?', a: 'To investigate whether the position of a word in a list affects how well it is remembered.' },
+      { q: 'What shape did Murdock\'s results produce?', a: 'A U-shaped "serial position curve" — best recall at the beginning and end, worst in the middle.' },
+      { q: 'Why are words at the start of a list remembered well (primacy effect)?', a: 'They have had more time to be rehearsed into long-term memory.' },
+      { q: 'Why are words at the end of a list remembered well (recency effect)?', a: 'They are still in short-term memory at the time of recall.' },
+      { q: 'Give one weakness of Murdock\'s study.', a: 'Low ecological validity — recalling random word lists is not something we do in everyday life, so it may not reflect how real memory works.' }
+    ]
+  },
+
+  {
+    id: 'bartlett1932',
+    name: 'Bartlett (1932)',
+    topic: 'Memory',
+    topicEmoji: '🧩',
+    topicColor: '#A78BFA',
+    subtitle: 'War of the Ghosts',
+    aim: 'To investigate how memory is reconstructed when people recall an unfamiliar story over time.',
+    method: 'British participants were asked to read a Native American folk tale called "The War of the Ghosts" and recall it repeatedly over increasing intervals. Bartlett used the method of "repeated reproduction".',
+    results: 'Each time the story was recalled it became shorter, more conventional, and more culturally familiar. Participants changed unfamiliar details (e.g. "canoe" became "boat") to fit their own cultural expectations. Details that did not make sense were omitted or altered.',
+    conclusion: 'Memory is not a faithful recording of events — it is reconstructive. We use existing knowledge and cultural schemas to make sense of new information, which means our memories are often distorted.',
+    strength: 'Using a real story gives the study higher ecological validity than word list studies — recalling stories is something we do in everyday life. The findings help explain why eyewitness accounts can be inaccurate.',
+    weakness: 'The story was unusual and culturally unfamiliar to British participants, which may have exaggerated the distortion effect. Also, Bartlett analysed recalled stories himself, which introduces researcher bias.',
+    quizQuestions: [
+      { q: 'What was the name of the story used in Bartlett\'s study?', a: 'The War of the Ghosts — a Native American folk tale.' },
+      { q: 'What did Bartlett find happened to the story each time it was recalled?', a: 'It became shorter, more conventional, and culturally familiar — unfamiliar details were changed or left out.' },
+      { q: 'What does Bartlett\'s study tell us about the nature of memory?', a: 'Memory is reconstructive — we use existing schemas and cultural knowledge to fill in gaps, which leads to distortion.' },
+      { q: 'What is a "schema" in the context of memory?', a: 'A mental framework or stored knowledge structure that helps us interpret new information, but can also distort memories.' },
+      { q: 'Give one strength of Bartlett\'s study.', a: 'Higher ecological validity than word list studies — recalling stories reflects everyday memory use.' }
+    ]
+  },
+
+  {
+    id: 'baddeley1966',
+    name: 'Baddeley (1966)',
+    topic: 'Memory',
+    topicEmoji: '🧩',
+    topicColor: '#A78BFA',
+    subtitle: 'Encoding in STM and LTM',
+    aim: 'To investigate whether short-term memory and long-term memory use different types of encoding.',
+    method: 'Participants were given word lists that were either acoustically similar (e.g. man, can, ban), acoustically dissimilar, semantically similar (e.g. big, large, great), or semantically dissimilar. They recalled the lists either immediately (STM) or after 20 minutes (LTM).',
+    results: 'STM was most disrupted by acoustically similar words — suggesting STM encodes mainly by sound. LTM was most disrupted by semantically similar words — suggesting LTM encodes mainly by meaning.',
+    conclusion: 'Short-term memory relies primarily on acoustic (sound-based) encoding, while long-term memory relies primarily on semantic (meaning-based) encoding.',
+    strength: 'It is a highly controlled laboratory study, making it reliable and replicable. It formed the basis of Baddeley and Hitch\'s influential working memory model.',
+    weakness: 'The tasks lack mundane realism — memorising word lists is not typical of everyday memory use. The 20-minute delay used to test LTM may not represent truly long-term storage.',
+    quizQuestions: [
+      { q: 'What did Baddeley find about how short-term memory encodes information?', a: 'STM mainly uses acoustic encoding (based on sound).' },
+      { q: 'What did Baddeley find about how long-term memory encodes information?', a: 'LTM mainly uses semantic encoding (based on meaning).' },
+      { q: 'What type of word lists caused most confusion in STM in Baddeley\'s study?', a: 'Acoustically similar words (words that sound alike, e.g. man, can, ban).' },
+      { q: 'What type of word lists caused most confusion in LTM in Baddeley\'s study?', a: 'Semantically similar words (words with similar meanings, e.g. big, large, great).' },
+      { q: 'Give one weakness of Baddeley\'s encoding study.', a: 'Low ecological validity — memorising word lists is not typical of real-world memory use.' }
+    ]
+  },
+
+  {
+    id: 'godden1975',
+    name: 'Godden & Baddeley (1975)',
+    topic: 'Memory',
+    topicEmoji: '🧩',
+    topicColor: '#A78BFA',
+    subtitle: 'Context-Dependent Memory (Diver Study)',
+    aim: 'To investigate whether memory is better when the recall environment matches the learning environment (context-dependent memory).',
+    method: 'Deep-sea divers learned a list of words either on land or underwater. They were then tested on recall either in the same environment or the opposite one — creating four conditions: learn land/recall land, learn land/recall water, learn water/recall land, learn water/recall water.',
+    results: 'Recall was significantly better when participants recalled words in the same environment they had learned them in (land-land or water-water). Recall was worst when the environment changed between learning and recall.',
+    conclusion: 'Memory is context-dependent — we remember information better when we are in the same environment as when we learned it. Environmental cues act as triggers for memory retrieval.',
+    strength: 'The study was conducted in a real-world setting with genuine divers, giving it good ecological validity compared to pure lab studies.',
+    weakness: 'The diver sample is highly specific and may not generalise to the wider population. The underwater environment is also very unusual, limiting how much we can apply findings to everyday learning.',
+    quizQuestions: [
+      { q: 'What was the key finding of Godden and Baddeley\'s diver study?', a: 'Recall was best when the learning and recall environments matched (e.g. both on land or both underwater).' },
+      { q: 'What does "context-dependent memory" mean?', a: 'Memory is better when recalled in the same environment as where it was learned — the context acts as a retrieval cue.' },
+      { q: 'Why does context-dependent memory occur?', a: 'The environment contains cues that were encoded alongside the information, and these cues help trigger the memory during retrieval.' },
+      { q: 'Give one practical application of context-dependent memory.', a: 'Students may recall exam information better if they revise in a similar environment to the exam hall (e.g. quiet, no music).' },
+      { q: 'Give one weakness of Godden and Baddeley\'s diver study.', a: 'The sample of deep-sea divers is very specific and unusual, so findings may not generalise to how most people\'s memory works.' }
+    ]
+  },
+
+  // ===== PERCEPTION =====
+  {
+    id: 'bruner1955',
+    name: 'Bruner & Minturn (1955)',
+    topic: 'Perception',
+    topicEmoji: '👁️',
+    topicColor: '#5EEAD4',
+    subtitle: 'Context and Perceptual Set',
+    aim: 'To demonstrate how the immediate physical context presented alongside an ambiguous figure could influence perception of that figure.',
+    method: 'Participants were shown an ambiguous figure that could be read as either the number "13" or the letter "B". One group saw it in a sequence of numbers; the other group saw it in a sequence of letters. They were asked to say what they saw.',
+    results: 'Participants in the numbers condition mostly reported seeing "13". Participants in the letters condition mostly reported seeing "B". This was also true when participants were asked to draw what they saw.',
+    conclusion: 'Context creates a perceptual set — our immediate surroundings predispose us to interpret ambiguous stimuli in a particular way.',
+    strength: 'The study used a standardised procedure, making it easy to replicate and test reliability. It has real-world applications — for example, understanding how context shapes police perception of suspects.',
+    weakness: 'The artificial nature of the task (looking at abstract symbols) may not reflect how perceptual set operates in complex real-world situations.',
+    quizQuestions: [
+      { q: 'What was the ambiguous figure used in Bruner and Minturn\'s study?', a: 'A figure that could be read as either the number "13" or the letter "B" depending on context.' },
+      { q: 'What did the study show about the role of context in perception?', a: 'Context creates a perceptual set — participants interpreted the same ambiguous figure differently depending on whether it appeared in a number or letter sequence.' },
+      { q: 'What is perceptual set?', a: 'A readiness to perceive something in a particular way, influenced by context, past experience, motivation, or emotion.' },
+      { q: 'Give one real-world application of Bruner and Minturn\'s findings.', a: 'Understanding how context shapes perception could help avoid errors in policing — just because someone looks suspicious in a certain context doesn\'t mean they are.' },
+      { q: 'Give one weakness of the Bruner and Minturn study.', a: 'The artificial task of identifying abstract symbols may not reflect how perceptual set works in real, complex everyday situations.' }
+    ]
+  },
+
+  {
+    id: 'gilchrist1952',
+    name: 'Gilchrist & Nesberg (1952)',
+    topic: 'Perception',
+    topicEmoji: '👁️',
+    topicColor: '#5EEAD4',
+    subtitle: 'Motivation and Perception',
+    aim: 'To test whether food deprivation would have an effect on the perception of food-related images.',
+    method: '26 university students were randomly assigned to two conditions: one group went without food for 20 hours; the other consumed food normally (control group). Both groups viewed slides showing different foods. After each slide they adjusted the brightness to match the original.',
+    results: 'The food-deprived participants adjusted the slides to a higher brightness level than the control group — suggesting they perceived the food images as brighter and more vivid.',
+    conclusion: 'Food deprivation (motivation) influenced perceptual accentuation — the deprived participants perceived food as more appealing and vivid because they were motivated to see it as desirable.',
+    strength: 'The use of a control group allowed direct comparison, strengthening the validity of conclusions. The GSR (galvanic skin response) measure provides an objective, biological indicator.',
+    weakness: 'The sample of university students is not representative of the general population. The artificial lab setting may not reflect how motivation affects perception in everyday life.',
+    quizQuestions: [
+      { q: 'What was the aim of Gilchrist and Nesberg\'s (1952) study?', a: 'To test whether food deprivation (motivation) would affect how people perceive food-related images.' },
+      { q: 'What did Gilchrist and Nesberg find?', a: 'Food-deprived participants perceived food images as brighter and more vivid than non-deprived participants.' },
+      { q: 'What does this study tell us about the relationship between motivation and perception?', a: 'Motivation (internal biological needs) can influence how we perceive stimuli — we see things we need as more vivid or appealing.' },
+      { q: 'Give one strength of Gilchrist and Nesberg\'s study.', a: 'The use of a control group (non-deprived participants) allows direct comparison, making the conclusions more valid.' },
+      { q: 'Give one weakness of Gilchrist and Nesberg\'s study.', a: 'The university student sample is not representative of the wider population, limiting how far findings can be generalised.' }
+    ]
+  },
+
+  {
+    id: 'mcginnies1949',
+    name: 'McGinnies (1949)',
+    topic: 'Perception',
+    topicEmoji: '👁️',
+    topicColor: '#5EEAD4',
+    subtitle: 'Emotion and Perceptual Defence',
+    aim: 'To investigate whether emotion affects perception — specifically whether people are slower to perceive threatening or taboo words.',
+    method: '16 student participants watched a series of words flash briefly onto a screen. Words were either neutral/pleasant (e.g. apple, dance) or mildly taboo (e.g. offensive words). Participants said the word aloud when they recognised it, and a galvanic skin response (GSR) detector measured their emotional reaction.',
+    results: 'Participants took longer to recognise and say the taboo words than the neutral ones. Their GSR readings also showed stronger emotional reactions to the taboo words, even before they consciously identified them.',
+    conclusion: 'McGinnies concluded that perceptual defence occurs — people unconsciously block or delay perception of emotionally threatening stimuli to protect themselves from anxiety.',
+    strength: 'The use of GSR provides an objective, biological measure of emotional reaction that participants cannot fake, reducing demand characteristics.',
+    weakness: 'An alternative explanation is that participants recognised the taboo words quickly but were simply embarrassed to say them aloud — this would explain the delay without needing the concept of perceptual defence.',
+    quizQuestions: [
+      { q: 'What is "perceptual defence" as demonstrated by McGinnies (1949)?', a: 'The unconscious tendency to block or delay perception of emotionally threatening or taboo stimuli.' },
+      { q: 'What did McGinnies find about how quickly participants recognised taboo words?', a: 'Participants took longer to recognise and say taboo words than neutral words, and showed stronger emotional reactions (via GSR) to them.' },
+      { q: 'What measuring device did McGinnies use to assess emotional reactions?', a: 'A galvanic skin response (GSR) detector, which measures changes in skin conductance linked to emotional arousal.' },
+      { q: 'Give one strength of McGinnies\' study.', a: 'GSR is an objective biological measure that participants cannot fake, reducing demand characteristics and increasing validity.' },
+      { q: 'Give one weakness of McGinnies\' study.', a: 'Participants may have simply been embarrassed to say the taboo words aloud, rather than showing true perceptual defence — so the delay could have a simpler explanation.' }
+    ]
+  },
+
+  {
+    id: 'hudson1960',
+    name: 'Hudson (1960)',
+    topic: 'Perception',
+    topicEmoji: '👁️',
+    topicColor: '#5EEAD4',
+    subtitle: 'Culture and Depth Perception',
+    aim: 'To investigate whether the ability to perceive depth in 2D pictures varies between people from different cultural and educational backgrounds.',
+    method: 'Participants from different cultural groups (White European, Native Black South African) and educational backgrounds were shown 2D pictures containing depth cues. They were asked questions about what they could see and which objects were nearer.',
+    results: 'White European participants perceived depth in the 2D images more accurately than Black South African participants. Those who had attended school perceived depth better than those who had not, regardless of cultural background.',
+    conclusion: 'Culture and education influence the ability to perceive depth in 2D images. This supports Gregory\'s constructivist theory — perception is shaped by past experience — and contradicts Gibson\'s idea that depth perception is innate.',
+    strength: 'Provides real cross-cultural evidence that perception is influenced by experience rather than being purely innate, supporting the nature-nurture debate.',
+    weakness: 'Cross-cultural research can be ethnocentric — the tasks used pictorial depth cues common in Western culture, which may have unfairly disadvantaged non-Western participants.',
+    quizQuestions: [
+      { q: 'What was the aim of Hudson\'s (1960) study?', a: 'To investigate whether the ability to perceive depth in 2D pictures varies between people from different cultural and educational backgrounds.' },
+      { q: 'What did Hudson find about White European vs Black South African participants?', a: 'White European participants were better at perceiving depth in 2D images. Those who attended school also perceived depth better than those who did not.' },
+      { q: 'Whose theory does Hudson\'s study support — Gibson or Gregory? Explain why.', a: 'Gregory\'s constructivist theory, because it shows depth perception is influenced by past experience and culture, rather than being purely innate as Gibson would suggest.' },
+      { q: 'Give one weakness of Hudson\'s cross-cultural study.', a: 'The study used pictorial depth cues typical of Western culture, which may have put non-Western participants at an unfair disadvantage — making it culturally biased.' },
+      { q: 'What does Hudson\'s study suggest about the nature-nurture debate in perception?', a: 'It suggests that nurture (experience, education, culture) plays a significant role in developing perceptual abilities, rather than perception being entirely innate.' }
+    ]
+  },
+
+  // ===== SOCIAL INFLUENCE =====
+  {
+    id: 'asch1955',
+    name: 'Asch (1955)',
+    topic: 'Social Influence',
+    topicEmoji: '👥',
+    topicColor: '#F9A8D4',
+    subtitle: 'Conformity — Line Study',
+    aim: 'To investigate whether people would conform to a majority group even when the majority was clearly wrong.',
+    method: 'One naive participant sat with 6–8 confederates (people in on the study). They were shown a standard line and three comparison lines, and asked which comparison line matched the standard. Confederates were told to give the same wrong answer on 12 of 18 trials.',
+    results: '75% of naive participants conformed at least once and gave the wrong answer to fit in with the group. Overall, participants conformed on 32% of the critical trials. In the control condition (no confederates), errors were less than 1%.',
+    conclusion: 'People conform to majority group pressure even when the answer is obviously wrong. This demonstrates normative social influence — conforming to be liked and avoid standing out.',
+    strength: 'The study was highly controlled, with a standardised procedure making it easy to replicate. It clearly demonstrated the power of majority influence.',
+    weakness: 'Ethical issues: participants were deceived about the true nature of the study. The all-male American sample limits generalisability. The artificial task may not reflect real-life conformity.',
+    quizQuestions: [
+      { q: 'What was the aim of Asch\'s (1955) conformity study?', a: 'To investigate whether people would conform to a majority group even when the majority was clearly wrong.' },
+      { q: 'What percentage of the time did participants conform in Asch\'s critical trials?', a: 'Approximately 32% of critical trials — and 75% of participants conformed at least once.' },
+      { q: 'What type of social influence does Asch\'s study demonstrate?', a: 'Normative social influence — conforming to fit in and avoid standing out, rather than because you believe the group is correct.' },
+      { q: 'What happened when one confederate gave the correct answer (a "dissenter")?', a: 'Conformity dropped dramatically — having even one ally dramatically reduced the pressure to conform.' },
+      { q: 'Give one ethical issue with Asch\'s study.', a: 'Participants were deceived — they were told it was a vision study, not a conformity study. They did not give fully informed consent.' }
+    ]
+  },
+
+  {
+    id: 'milgram1963',
+    name: 'Milgram (1963)',
+    topic: 'Social Influence',
+    topicEmoji: '👥',
+    topicColor: '#F9A8D4',
+    subtitle: 'Obedience to Authority',
+    aim: 'To investigate whether ordinary people would obey an authority figure even if it meant harming another person.',
+    method: '40 male volunteers aged 20–50 were recruited via newspaper advert. They were told they were "teachers" in a memory study and had to give electric shocks to a "learner" (a confederate) for wrong answers, increasing by 15V each time up to 450V. An experimenter in a grey lab coat told them to continue if they hesitated.',
+    results: 'All participants continued to at least 300V. 65% continued all the way to 450V (the maximum). Participants showed visible signs of distress — sweating, trembling, stuttering — but continued to obey.',
+    conclusion: 'Ordinary people will obey authority figures even to the point of causing extreme harm. Obedience is influenced by the legitimacy of authority, the agentic state (feeling like an agent of someone else\'s will), and situational factors.',
+    strength: 'High historical significance — changed our understanding of obedience. Findings have been replicated across different cultures. High internal validity due to careful controls.',
+    weakness: 'Serious ethical issues: participants were deceived, psychologically harmed, and pressured to continue against their wishes. Sample was limited to American men, limiting generalisability.',
+    quizQuestions: [
+      { q: 'What percentage of participants in Milgram\'s study gave the maximum 450V shock?', a: '65% of participants obeyed all the way to the maximum 450V.' },
+      { q: 'What is the "agentic state" as described by Milgram?', a: 'When a person sees themselves as acting on behalf of an authority figure rather than being personally responsible for their actions — this reduces feelings of guilt and increases obedience.' },
+      { q: 'Name two factors that Milgram\'s variations showed affect obedience levels.', a: 'Proximity to the victim (closer = less obedience), legitimacy of the authority figure (less prestigious location = less obedience), presence of a disobedient peer (rebel = less obedience).' },
+      { q: 'What ethical issues arose from Milgram\'s study?', a: 'Deception (participants were told it was a memory study), lack of right to withdraw (participants were pressured to continue), and psychological harm (high levels of stress).' },
+      { q: 'Give one strength of Milgram\'s study.', a: 'The findings have been replicated in different countries with similar results, suggesting the findings are reliable and cross-cultural.' }
+    ]
+  },
+
+  {
+    id: 'piliavin1969',
+    name: 'Piliavin et al. (1969)',
+    topic: 'Social Influence',
+    topicEmoji: '👥',
+    topicColor: '#F9A8D4',
+    subtitle: 'Subway Samaritan Study',
+    aim: 'To investigate whether characteristics of the victim (appearing drunk vs disabled) would affect bystanders\' willingness to help.',
+    method: '4 student researchers boarded New York subway trains. One played the "victim" who collapsed after 70 seconds and remained on the floor. In some trials the victim appeared disabled (carried a cane); in others they appeared drunk. 2 observers recorded helping behaviour across 103 trials.',
+    results: 'In the disabled condition, the victim was helped 95% of the time. In the drunk condition, help dropped to 50%. 87% of helpers in the disabled condition helped within the first 70 seconds. When no help came, a "model" stepped in after 70–150 seconds.',
+    conclusion: 'People are more likely to help when they perceive the victim as deserving of help (disabled vs drunk). The study also found no evidence of the bystander effect — large crowds did not reduce helping, unlike lab studies.',
+    strength: 'High ecological validity — conducted on real subway trains with real passengers who did not know they were in a study. Findings may better reflect real-life helping behaviour.',
+    weakness: 'Ethical issues: participants (passengers) did not consent to being in the study. The study caused real distress. Difficult to control extraneous variables on a real subway.',
+    quizQuestions: [
+      { q: 'What was the key finding of Piliavin\'s subway study regarding victim characteristics?', a: 'The disabled victim was helped 95% of the time, compared to 50% for the drunk victim — people are more likely to help those they perceive as deserving.' },
+      { q: 'What surprising finding did Piliavin get about the bystander effect?', a: 'Unlike laboratory studies, a larger crowd did not reduce helping — people helped just as readily in full carriages as in nearly empty ones.' },
+      { q: 'Give one strength of Piliavin\'s subway study.', a: 'High ecological validity — real passengers in a natural setting, so the findings may better reflect real helping behaviour.' },
+      { q: 'Give one ethical issue with Piliavin\'s study.', a: 'Passengers did not consent to being participants and may have experienced genuine distress at seeing someone collapse.' },
+      { q: 'What does Piliavin\'s study suggest about what influences helping behaviour?', a: 'Whether we help depends on characteristics of the victim — we are more likely to help those we perceive as deserving (e.g. disabled rather than drunk).' }
+    ]
+  },
+
+  // ===== BRAIN & NEUROPSYCHOLOGY =====
+  {
+    id: 'penfield1947',
+    name: 'Penfield (1947)',
+    topic: 'Brain & Neuropsychology',
+    topicEmoji: '🧬',
+    topicColor: '#A78BFA',
+    subtitle: 'Study of the Interpretive Cortex',
+    aim: 'To describe the psychological responses patients gave when different parts of their brain were electrically stimulated.',
+    method: 'Patients with epilepsy were conscious on the operating table (only local anaesthetic was used). Penfield used the Montreal procedure — electrically stimulating different areas of the brain and recording patient responses. He studied over 1,000 cases across more than 30 years.',
+    results: 'Stimulation of the visual cortex produced colours, shadows and outlines of objects. Stimulation of the somatosensory cortex produced tingling or a false sense of movement. Stimulation of the temporal lobe produced two types of response: "experiences" (reliving past events vividly) and "interpretations" (feelings or emotions linked to past events).',
+    conclusion: 'Penfield concluded that the temporal lobe has a role in storing memories of past events. Different areas of the cortex are responsible for specific functions — providing evidence for localisation of brain function.',
+    strength: 'Very large sample size (over 1,000 patients) over 30+ years makes the findings highly reliable. It is also one of the few direct ways to study the living human brain.',
+    weakness: 'The sample consisted only of epilepsy patients, whose brains may not function like neurologically typical brains — limiting generalisability.',
+    quizQuestions: [
+      { q: 'What was the aim of Penfield\'s study?', a: 'To investigate what psychological responses patients had when different parts of their brain were electrically stimulated.' },
+      { q: 'What happened when Penfield stimulated the temporal lobe?', a: 'Patients experienced two types of responses: "experiences" (reliving past memories vividly) and "interpretations" (feelings or emotions linked to past events).' },
+      { q: 'What did Penfield\'s study conclude about the temporal lobe?', a: 'The temporal lobe has a role in storing memories of past events.' },
+      { q: 'Give one strength of Penfield\'s study.', a: 'Extremely large sample size (over 1,000 patients across 30 years) makes the findings very reliable.' },
+      { q: 'Give one weakness of Penfield\'s study.', a: 'The sample only included epilepsy patients, whose brains may differ from neurologically typical people, limiting how far findings can be generalised.' }
+    ]
+  },
+
+  {
+    id: 'tulving1989',
+    name: 'Tulving (1989)',
+    topic: 'Brain & Neuropsychology',
+    topicEmoji: '🧬',
+    topicColor: '#A78BFA',
+    subtitle: '"Gold" Memory Study',
+    aim: 'To investigate whether thinking about episodic memories and semantic memories produces different patterns of blood flow in the brain.',
+    method: '6 volunteers (including Tulving himself and his wife) were each injected with a small amount of radioactive gold. A PET scan using gamma rays showed which brain areas were most active during tasks. Each participant performed 8 trials — 4 episodic (personal memories like a holiday) and 4 semantic (recalling historical facts) in a random order.',
+    results: 'Clear differences in blood flow patterns were found for 3 of the 6 participants. Episodic memory tasks tended to activate the frontal lobe more, while semantic memory tasks activated the posterior regions more.',
+    conclusion: 'Episodic and semantic memory are stored and processed in different areas of the brain, providing neurological support for Tulving\'s distinction between the two types of LTM.',
+    strength: 'Used an objective, scientific brain imaging technique (PET scan) to directly observe brain activity, giving the study high validity as evidence.',
+    weakness: 'Very small sample size (only 6 participants) — differences were only clearly seen in 3 of them, making the findings unreliable and difficult to generalise.',
+    quizQuestions: [
+      { q: 'What was the aim of Tulving\'s "gold" memory study?', a: 'To investigate whether episodic and semantic memories produce different patterns of brain activity.' },
+      { q: 'What technique did Tulving use to scan the brain in this study?', a: 'A PET (positron emission tomography) scan, which detected brain activity via radioactive gold injected into participants.' },
+      { q: 'What did Tulving find about episodic and semantic memory?', a: 'They produced different patterns of blood flow in the brain, suggesting they are stored in different brain areas.' },
+      { q: 'Give one strength of Tulving\'s study.', a: 'Used an objective brain imaging technique (PET scan) to directly observe brain activity, giving strong scientific validity.' },
+      { q: 'Give one weakness of Tulving\'s study.', a: 'Extremely small sample size (only 6 participants, with clear results in only 3) makes the findings unreliable and not generalisable.' }
+    ]
+  },
+
+  // ===== PSYCHOLOGICAL PROBLEMS =====
+  {
+    id: 'wiles2013',
+    name: 'Wiles et al. (2013)',
+    topic: 'Psychological Problems',
+    topicEmoji: '🌧️',
+    topicColor: '#5EEAD4',
+    subtitle: 'CBT for Depression',
+    aim: 'To investigate whether combining CBT with antidepressant medication was more effective than medication alone for treating depression.',
+    method: 'Participants who had not responded adequately to antidepressants were randomly assigned to one of two groups: Group 1 received antidepressants only (235 participants); Group 2 received antidepressants AND 12–18 sessions of CBT (234 participants). Depression was measured using the BDI (Beck Depression Inventory) over 12 months.',
+    results: 'After 6 months: 46% of Group 2 showed more than 50% reduction in symptoms, compared to only 22% of Group 1. After 12 months: Group 2 continued to show greater recovery and greater chance of remission.',
+    conclusion: 'CBT is a useful addition to antidepressant medication for treating depression. Its benefits are maintained over a 12-month period.',
+    strength: 'Large, well-matched sample. Random allocation to conditions reduces bias. Longitudinal design (12 months) shows that benefits of CBT are maintained over time.',
+    weakness: 'Questionnaire-based measurement (BDI) relies on self-report, which may not be fully accurate — participants may under or over-report symptoms. Some dropout occurred over 12 months (16% by the end).',
+    quizQuestions: [
+      { q: 'What was the aim of Wiles\' (2013) study?', a: 'To investigate whether combining CBT with antidepressants was more effective than antidepressants alone for people with treatment-resistant depression.' },
+      { q: 'What did Wiles find after 6 months?', a: '46% of the CBT + medication group showed a 50%+ reduction in symptoms, compared to only 22% of the medication-only group.' },
+      { q: 'What does Wiles\' study suggest about the effectiveness of CBT?', a: 'CBT is a useful addition to antidepressant medication — the combination produces significantly better outcomes than medication alone.' },
+      { q: 'Give one strength of Wiles\' study.', a: 'Random allocation to conditions reduces participant bias and means the two groups are likely to be comparable at the start.' },
+      { q: 'Give one weakness of Wiles\' study.', a: 'Depression was measured by self-report questionnaire (BDI), which may not be fully accurate as participants may under or over-report their symptoms.' }
+    ]
+  },
+
+  {
+    id: 'kaij1960',
+    name: 'Kaij (1960)',
+    topic: 'Psychological Problems',
+    topicEmoji: '🌧️',
+    topicColor: '#5EEAD4',
+    subtitle: 'Twin Study of Alcohol Abuse',
+    aim: 'To investigate whether alcoholism could be explained by hereditary factors — do children inherit a genetic vulnerability to become alcoholic?',
+    method: '310 male twins from Sweden were studied, where at least one twin had registered with the temperance board (a register of people with alcohol problems). 48 pairs were identical twins (same genetics); 126 were non-identical. Interviews and questionnaires categorised them into 5 categories from chronic alcoholism to not drinking.',
+    results: '54% of identical twins were in the same category of alcohol use as their twin (concordance rate), compared to 28% of non-identical twins.',
+    conclusion: 'Because concordance was higher in identical twins, there is a hereditary factor involved in alcoholism. However, as the rate was not 100%, genetics cannot be the only factor — environment also plays a role.',
+    strength: 'Comparing identical and non-identical twins is a well-established method for investigating genetic vs environmental contributions. Other research has produced similar findings.',
+    weakness: 'The sample was only male twins from Sweden, limiting generalisability. The temperance board data only captured public displays of alcohol abuse — it may have missed many cases. Also, identical twins often share similar environments, making it hard to separate genetic from environmental factors.',
+    quizQuestions: [
+      { q: 'What was the aim of Kaij\'s (1960) twin study?', a: 'To investigate whether alcoholism has a hereditary component — whether genetics contributes to the risk of becoming alcoholic.' },
+      { q: 'What was the concordance rate for identical twins in Kaij\'s study?', a: '54% — meaning 54% of identical twins were in the same alcohol use category as their twin.' },
+      { q: 'Why was the concordance rate for identical twins compared to non-identical twins?', a: 'Identical twins share 100% of their genes; non-identical twins share about 50%. Higher concordance in identical twins suggests a genetic contribution.' },
+      { q: 'What does the fact that concordance was not 100% tell us?', a: 'Genetics cannot be the only factor — environmental influences must also play a role in the development of alcoholism.' },
+      { q: 'Give one weakness of Kaij\'s study.', a: 'The sample consisted only of male Swedish twins, so findings cannot be easily generalised to women or people from different cultural backgrounds.' }
+    ]
+  },
+
+  // ===== LANGUAGE, THOUGHT & COMMUNICATION =====
+  {
+    id: 'vonfrisch1967',
+    name: 'Von Frisch (1967)',
+    topic: 'Language, Thought & Communication',
+    topicEmoji: '💬',
+    topicColor: '#FDE68A',
+    subtitle: 'Bee Communication Study',
+    aim: 'To investigate how honeybees communicate the location of a food source to other bees in the hive.',
+    method: 'Von Frisch used a glass-sided beehive to observe bees without disturbing them. Each bee was identified with a tiny dot of paint. He changed the distance of a sugar water source and observed what dance the bees performed on returning to the hive. He made 600 observations over 20 years.',
+    results: 'Bees perform different "dances" to communicate information about food sources. The "round dance" indicates food nearby; the "waggle dance" indicates food further away, with the angle and duration communicating distance and direction.',
+    conclusion: 'Honeybees have a sophisticated form of communication — the bee dance gives other worker bees precise information about the location of food sources, suggesting a functional communication system.',
+    strength: 'Conducted over 20 years with 600 observations, making the findings highly reliable. The marking of individual bees allowed systematic tracking.',
+    weakness: 'The glass hive is not the bees\' natural environment, which may have affected their behaviour and reduced ecological validity. The study used sugar water rather than natural food sources.',
+    quizQuestions: [
+      { q: 'What was the aim of Von Frisch\'s bee study?', a: 'To investigate how honeybees communicate the location and distance of a food source to other bees.' },
+      { q: 'What is the "waggle dance" in Von Frisch\'s study?', a: 'A dance performed by bees to communicate that a food source is far away — the angle and duration indicate the direction and distance.' },
+      { q: 'Give one strength of Von Frisch\'s study.', a: 'Conducted over 20 years with 600 observations, making the findings extremely reliable.' },
+      { q: 'Give one weakness of Von Frisch\'s study.', a: 'The glass hive is not a natural environment for bees, so the bees may have behaved differently from how they would in the wild — reducing ecological validity.' },
+      { q: 'What does Von Frisch\'s study tell us about animal communication?', a: 'It shows that some animals have a sophisticated communication system that conveys specific information (direction, distance) — but it is still limited compared to human language.' }
+    ]
+  },
+
+  // ===== DEVELOPMENT =====
+  {
+    id: 'piaget1954',
+    name: 'Piaget (1954)',
+    topic: 'Development',
+    topicEmoji: '🌱',
+    topicColor: '#F9A8D4',
+    subtitle: 'Theory of Cognitive Development',
+    aim: 'To explain how children\'s thinking develops through a series of distinct stages as they mature.',
+    method: 'Piaget used observations and clinical interviews with children of different ages. He set tasks such as the conservation task (pouring liquid into different shaped glasses) and the three mountains task (asking children what a doll on the other side of a model mountain range would see).',
+    results: 'Piaget identified four stages: Sensorimotor (0–2 years) — learning through senses and actions, object permanence develops; Pre-operational (2–7 years) — egocentric, no conservation; Concrete operational (7–11 years) — logical thinking about real objects, conservation achieved; Formal operational (11+) — abstract and hypothetical thinking.',
+    conclusion: 'Cognitive development happens in fixed, universal stages determined by biological maturation. Children cannot be "rushed" through stages — they must be ready. Key processes are assimilation (fitting new info into existing schemas) and accommodation (changing schemas to fit new info).',
+    strength: 'Hugely influential on education — his ideas about readiness shaped how schools teach. His concepts of schemas, assimilation and accommodation are still widely used in psychology.',
+    weakness: 'Research by McGarrigle and Donaldson showed children can pass conservation tasks at younger ages when tasks are made more natural — suggesting Piaget underestimated children\'s abilities due to poorly designed tasks.',
+    quizQuestions: [
+      { q: 'What are Piaget\'s four stages of cognitive development in order?', a: 'Sensorimotor (0–2), Pre-operational (2–7), Concrete operational (7–11), Formal operational (11+).' },
+      { q: 'What is "object permanence" and when does it develop according to Piaget?', a: 'The understanding that objects continue to exist when out of sight. Develops around 8 months during the sensorimotor stage.' },
+      { q: 'What is the difference between assimilation and accommodation?', a: 'Assimilation: fitting new information into an existing schema. Accommodation: changing a schema because new information does not fit.' },
+      { q: 'What is egocentrism in Piaget\'s theory?', a: 'The inability of pre-operational children (2–7 years) to see the world from another person\'s perspective — they assume others see what they see.' },
+      { q: 'Give one weakness of Piaget\'s theory.', a: 'McGarrigle and Donaldson showed children could conserve at younger ages than Piaget claimed when tasks were made more child-friendly — suggesting Piaget underestimated children\'s abilities.' }
+    ]
+  },
+
+  {
+    id: 'mcgarrigle1974',
+    name: 'McGarrigle & Donaldson (1974)',
+    topic: 'Development',
+    topicEmoji: '🌱',
+    topicColor: '#F9A8D4',
+    subtitle: 'Naughty Teddy Study',
+    aim: 'To investigate whether Piaget had underestimated children\'s ability to conserve number by using tasks that were confusing or appeared deliberate.',
+    method: '80 children aged 3.5–5 years from Edinburgh took part. They were shown two rows of counters and agreed they were the same. In one condition, a "Naughty Teddy" puppet accidentally messed up one row; in another, the experimenter deliberately moved the counters. Children were asked which row had more.',
+    results: 'When the Naughty Teddy accidentally disturbed the counters, around 50–70% of children correctly said there were still the same number. When the experimenter deliberately changed the row, far fewer children (as in Piaget\'s original study) gave the correct answer.',
+    conclusion: 'When changes appeared accidental and the task was more natural, younger children could conserve number. Piaget\'s tasks may have been misleading — when an adult deliberately changes something, children assume the answer must be different.',
+    strength: 'The study used a more child-friendly and natural context than Piaget\'s original tasks, giving it higher ecological validity for testing children\'s real abilities.',
+    weakness: 'The sample was limited to children from Edinburgh, which may not represent all children. Also, some critics argue children may have been responding to the narrative of the "accident" rather than genuinely conserving.',
+    quizQuestions: [
+      { q: 'What was the aim of McGarrigle and Donaldson\'s Naughty Teddy study?', a: 'To test whether Piaget had underestimated children\'s conservation ability by using confusing, adult-led tasks.' },
+      { q: 'What did the Naughty Teddy do in the study?', a: 'A puppet "accidentally" messed up one row of counters, making the change appear unintentional rather than deliberate.' },
+      { q: 'What did McGarrigle and Donaldson find?', a: 'When the change appeared accidental (made by the Naughty Teddy), around 50–70% of children aged 3.5–5 could correctly conserve number — far more than in Piaget\'s original study.' },
+      { q: 'What does this study suggest about Piaget\'s conservation tasks?', a: 'When an adult deliberately changes something, children assume the answer must be different — making Piaget\'s tasks misleading rather than truly testing conservation ability.' },
+      { q: 'Give one strength of the Naughty Teddy study.', a: 'The more natural, child-friendly context gives the study higher ecological validity than Piaget\'s original artificial tasks.' }
+    ]
+  },
+
+  {
+    id: 'hughes1975',
+    name: 'Hughes (1975)',
+    topic: 'Development',
+    topicEmoji: '🌱',
+    topicColor: '#F9A8D4',
+    subtitle: 'Policeman Doll Study',
+    aim: 'To investigate whether Piaget had overestimated egocentrism in young children by using a more meaningful and child-friendly task than the three mountains task.',
+    method: 'Children were shown a model with two walls crossing to form a "plus" shape, creating four sections. Two toy policemen were placed in certain sections. Children were asked to hide a doll so the policeman could not see it. The task was explained and practised with the child first.',
+    results: 'Around 90% of children aged 3.5–5 years successfully hid the doll from the policeman\'s view — demonstrating they could take another person\'s perspective. This contrasted sharply with Piaget\'s three mountains task where most pre-operational children failed.',
+    conclusion: 'Young children are less egocentric than Piaget believed. When tasks are made meaningful and understandable, children as young as 3.5 can take another\'s point of view. Piaget\'s three mountains task was too abstract and unfamiliar.',
+    strength: 'The task had a clear and meaningful purpose for children (hiding from a policeman), making it more relevant and easier to understand than Piaget\'s abstract three mountains task.',
+    weakness: 'Children were given practice before the real task, which may have helped them understand what was required — making it easier than a true test of spontaneous perspective-taking.',
+    quizQuestions: [
+      { q: 'What was the aim of Hughes\' (1975) Policeman Doll study?', a: 'To test whether children were as egocentric as Piaget claimed, using a more meaningful and child-friendly task.' },
+      { q: 'What did Hughes find in the Policeman Doll study?', a: 'Around 90% of children aged 3.5–5 successfully hid the doll — showing they could take the policeman\'s perspective and were not as egocentric as Piaget claimed.' },
+      { q: 'Why did Hughes think his task was fairer than Piaget\'s three mountains task?', a: 'The policeman task was more meaningful and understandable for children — hiding from a policeman is a scenario children can relate to, unlike the abstract mountain layout.' },
+      { q: 'What does Hughes\' study suggest about Piaget\'s conclusions on egocentrism?', a: 'Piaget overestimated egocentrism — children can take another\'s perspective at a younger age than Piaget claimed, when the task is appropriate and meaningful.' },
+      { q: 'Give one weakness of Hughes\' Policeman Doll study.', a: 'Children were given practice before the real task, which may have helped them understand what was required, making performance artificially better.' }
+    ]
+  },
+
+  {
+    id: 'dweck2006',
+    name: 'Dweck (2006)',
+    topic: 'Development',
+    topicEmoji: '🌱',
+    topicColor: '#F9A8D4',
+    subtitle: 'Mindset Theory of Learning',
+    aim: 'To investigate how students\' beliefs about their own intelligence affect their motivation, resilience and achievement.',
+    method: 'Dweck conducted research across schools observing and testing children\'s responses to challenges and failures. She gave students praise for either their intelligence ("you\'re so clever") or their effort ("you worked really hard") and tracked how they responded to subsequent challenges.',
+    results: 'Students praised for intelligence tended to avoid challenges (to protect their reputation) and gave up more easily after failure. Students praised for effort were more likely to tackle difficult tasks, persist, and improve over time.',
+    conclusion: 'Dweck identified two mindsets: a fixed mindset (believing intelligence is innate and unchangeable) leads to avoiding challenge; a growth mindset (believing ability can be developed through effort) leads to resilience and higher achievement.',
+    strength: 'Research has been applied widely in education — schools that teach growth mindset have seen improvements in student achievement and resilience. The theory is grounded in substantial observational and experimental research.',
+    weakness: 'Some attempts to replicate the benefits of growth mindset interventions in schools have produced mixed results, suggesting the effect may be smaller or more context-dependent than originally claimed.',
+    quizQuestions: [
+      { q: 'What is the difference between a fixed mindset and a growth mindset according to Dweck?', a: 'Fixed mindset: believing intelligence is innate and cannot change — leads to avoiding challenge. Growth mindset: believing ability can develop through effort — leads to persistence and higher achievement.' },
+      { q: 'What did Dweck find happened when children were praised for intelligence rather than effort?', a: 'Children praised for intelligence tended to avoid challenges (to protect their image) and gave up more easily after failure.' },
+      { q: 'What did Dweck find happened when children were praised for effort?', a: 'They were more likely to take on difficult tasks, persist after setbacks, and improve over time.' },
+      { q: 'Give one strength of Dweck\'s mindset theory.', a: 'It has been widely applied in education — schools using growth mindset approaches have seen improvements in student resilience and achievement.' },
+      { q: 'Give one weakness of Dweck\'s mindset theory.', a: 'Some replication studies have found mixed or smaller effects, suggesting growth mindset interventions may not always be as effective as originally claimed.' }
+    ]
+  },
+
+  {
+    id: 'willingham2009',
+    name: 'Willingham (2009)',
+    topic: 'Development',
+    topicEmoji: '🌱',
+    topicColor: '#F9A8D4',
+    subtitle: 'Learning Theory',
+    aim: 'To challenge the concept of fixed learning styles and propose a scientifically grounded theory of how people learn most effectively.',
+    method: 'Willingham reviewed a large body of existing scientific research on memory, attention, and cognition to develop his theory. He did not conduct a single experiment but synthesised evidence from cognitive psychology.',
+    results: 'Willingham found little scientific evidence that matching teaching to individual "learning styles" (e.g. visual, auditory, kinaesthetic) improves learning outcomes. He argued that the critical factor is whether students think deeply about the content — meaning drives memory. He identified four key factors: praise, memory and forgetting, self-regulation, and neuroscience.',
+    conclusion: 'Learning is most effective when students are actively thinking about meaning rather than passively receiving information. Teaching methods should be chosen based on the nature of the content, not students\' supposed learning style preferences.',
+    strength: 'Based on a wide body of scientific evidence from cognitive psychology rather than one small study, giving his conclusions strong evidential support.',
+    weakness: 'Because it is a theory built from reviewing others\' research rather than original experimental data, it is harder to test directly. Some educators also argue that learning preferences, even if not strict "styles", still have value.',
+    quizQuestions: [
+      { q: 'What did Willingham argue about learning styles?', a: 'There is little scientific evidence that matching teaching to individual learning styles improves outcomes — the idea of fixed learning styles is not well supported.' },
+      { q: 'According to Willingham, what is the critical factor in effective learning?', a: 'The depth of thinking — students learn best when they actively think about the meaning of what they are studying, not just passively receiving information.' },
+      { q: 'What are Willingham\'s four key factors for learning?', a: 'Praise, memory and forgetting, self-regulation, and neuroscience.' },
+      { q: 'Give one strength of Willingham\'s learning theory.', a: 'It is based on a wide body of scientific research from cognitive psychology, giving it strong evidential foundations.' },
+      { q: 'Give one weakness of Willingham\'s learning theory.', a: 'It is based on reviewing existing research rather than original experiments, making it harder to test directly as a single theory.' }
+    ]
+  },
+
+  // ===== RESEARCH METHODS =====
+  {
+    id: 'loftuspickrell1995',
+    name: 'Loftus & Pickrell (1995)',
+    topic: 'Research Methods',
+    topicEmoji: '🔬',
+    topicColor: '#FDE68A',
+    subtitle: 'Lost in the Mall Study',
+    aim: 'To investigate whether it is possible to implant a completely false childhood memory into an adult\'s mind.',
+    method: 'Participants were given a booklet containing four short descriptions of childhood events — three real events (confirmed by family members) and one false event (being lost in a shopping mall as a child). Participants were asked to write what they remembered about each event, and were interviewed twice over several weeks.',
+    results: 'About 25% of participants came to "remember" the false mall event — describing it in detail, even though it never happened. Some maintained these false memories even when told one of the events was fabricated.',
+    conclusion: 'False memories can be successfully implanted using suggestion. Memory is not a faithful recording — it is reconstructive and open to distortion through suggestion, social pressure, and imagination.',
+    strength: 'Has important real-world implications for eyewitness testimony and the legal system — it shows that memories reported in court may be false, especially if leading questions are used.',
+    weakness: 'Ethical concerns — participants were deliberately deceived and some were distressed to discover they had false memories. The mall scenario was relatively mild; it is unclear whether more traumatic false memories could be implanted as easily.',
+    quizQuestions: [
+      { q: 'What was the aim of Loftus and Pickrell\'s (1995) Lost in the Mall study?', a: 'To investigate whether a completely false childhood memory could be implanted into an adult\'s mind through suggestion.' },
+      { q: 'What did Loftus and Pickrell find?', a: 'About 25% of participants came to "remember" the false event (being lost in a mall), describing it in detail even though it never happened.' },
+      { q: 'What does this study tell us about the nature of memory?', a: 'Memory is reconstructive and can be distorted by suggestion — false memories can feel completely real and be described in vivid detail.' },
+      { q: 'Give one real-world application of Loftus and Pickrell\'s findings.', a: 'It highlights the unreliability of eyewitness testimony in court — witnesses may genuinely believe false memories, especially if they have been exposed to leading questions or suggestions.' },
+      { q: 'Give one ethical issue with Loftus and Pickrell\'s study.', a: 'Participants were deceived and some were distressed to discover they had developed false memories — raising concerns about psychological harm.' }
+    ]
+  },
+
+  {
+    id: 'murdock1962rm',
+    name: 'Murdock (1962) — Research Design',
+    topic: 'Research Methods',
+    topicEmoji: '🔬',
+    topicColor: '#FDE68A',
+    subtitle: 'Example of a Laboratory Experiment',
+    aim: 'To demonstrate key features of a laboratory experiment using Murdock\'s serial position study as an example.',
+    method: 'Murdock\'s study is used as a classic example of a laboratory experiment in research methods. Participants were read word lists in a controlled setting. The IV was the position of words in the list; the DV was the number of words recalled. Extraneous variables (e.g. word length, speed of presentation) were controlled.',
+    results: 'As a research methods example: the study shows clear operationalisation of variables (IV = word position; DV = number of words recalled), standardised procedure, and quantitative data that can be analysed statistically.',
+    conclusion: 'Laboratory experiments allow high control of variables, making it easier to establish cause and effect. However, the artificial setting can reduce ecological validity. Murdock\'s study illustrates how to design a controlled experiment with clearly defined variables.',
+    strength: 'High internal validity due to careful control of variables. The standardised procedure means it is replicable — other researchers can test whether the same results occur.',
+    weakness: 'Low ecological validity — recalling word lists in a lab is not representative of how memory works in everyday life. The artificial setting may produce demand characteristics.',
+    quizQuestions: [
+      { q: 'What is a laboratory experiment?', a: 'A study conducted in a controlled environment where the researcher manipulates the independent variable and controls extraneous variables to measure the effect on the dependent variable.' },
+      { q: 'In Murdock\'s study, what was the independent variable (IV)?', a: 'The position of words in the list (beginning, middle, or end).' },
+      { q: 'What is meant by "operationalisation" of variables?', a: 'Defining variables in a way that makes them measurable — e.g. defining memory as "number of words correctly recalled".' },
+      { q: 'Give one strength of laboratory experiments.', a: 'High internal validity — careful control of variables makes it easier to establish cause and effect and rule out alternative explanations.' },
+      { q: 'Give one weakness of laboratory experiments.', a: 'Low ecological validity — the artificial setting may not reflect how behaviour occurs in real life, making it hard to generalise findings.' }
+    ]
+  }
+];
+
+function getStudyCategories() {
+  const cats = {};
+  studyBank.forEach(s => {
+    if (!cats[s.topic]) cats[s.topic] = { emoji: s.topicEmoji, color: s.topicColor, studies: [] };
+    cats[s.topic].studies.push(s);
+  });
+  return cats;
+}
+
+// ==========================================
+// REVISION HUB SCREEN FUNCTIONS
+// ==========================================
+
+function showRevisionHub() {
+  const cats = getStudyCategories();
+  const list = document.getElementById('revisionCategoryList');
+  list.innerHTML = Object.entries(cats).map(([topic, data]) => `
+    <div class="revision-category" onclick="showStudyList('${topic}')">
+      <div class="revision-category-emoji">${data.emoji}</div>
+      <div class="revision-category-info">
+        <div class="revision-category-name">${topic}</div>
+        <div class="revision-category-count">${data.studies.length} studies</div>
+      </div>
+      <div style="color:var(--text-muted)">›</div>
+    </div>
+  `).join('');
+  showScreen('revisionScreen');
+}
+
+function showStudyList(topic) {
+  const cats = getStudyCategories();
+  const data = cats[topic];
+  document.getElementById('studyListTitle').textContent = `${data.emoji} ${topic}`;
+
+  const html = data.studies.map(study => `
+    <div class="study-card" id="scard-${study.id}">
+      <div class="study-card-header" onclick="toggleStudyCard('${study.id}')">
+        <div style="font-size:1.5rem">${study.topicEmoji}</div>
+        <div class="study-card-title">
+          <div class="study-card-name">${study.name}</div>
+          <div class="study-card-sub">${study.subtitle}</div>
+        </div>
+        <div class="study-card-chevron">▼</div>
+      </div>
+      <div class="study-card-body">
+        <div class="study-section">
+          <div class="study-section-title">🎯 Aim</div>
+          <div class="study-section-body">${study.aim}</div>
+        </div>
+        <div class="study-section">
+          <div class="study-section-title">🔬 Method</div>
+          <div class="study-section-body">${study.method}</div>
+        </div>
+        <div class="study-section">
+          <div class="study-section-title">📊 Results</div>
+          <div class="study-section-body">${study.results}</div>
+        </div>
+        <div class="study-section">
+          <div class="study-section-title">💡 Conclusion</div>
+          <div class="study-section-body">${study.conclusion}</div>
+        </div>
+        <div class="study-section">
+          <div class="study-section-title">⚖️ Evaluation</div>
+          <div class="study-eval">
+            <div class="study-eval-box strength">
+              <div class="study-eval-label">✅ Strength</div>
+              ${study.strength}
+            </div>
+            <div class="study-eval-box weakness">
+              <div class="study-eval-label">❌ Weakness</div>
+              ${study.weakness}
+            </div>
+          </div>
+        </div>
+        <button class="study-quiz-btn" onclick="startStudyQuiz('${study.id}')">🧠 Quiz me on this study!</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('studyListContent').innerHTML = html;
+  showScreen('studyListScreen');
+}
+
+function toggleStudyCard(id) {
+  const card = document.getElementById('scard-' + id);
+  card.classList.toggle('open');
+}
+
+// ==========================================
+// STUDY QUIZ
+// ==========================================
+
+let studyQuizState = { study: null, questions: [], index: 0, score: 0 };
+
+function startStudyQuiz(studyId) {
+  const study = studyBank.find(s => s.id === studyId);
+  if (!study) return;
+
+  // Shuffle questions
+  const qs = [...study.quizQuestions].sort(() => Math.random() - 0.5);
+  studyQuizState = { study, questions: qs, index: 0, score: 0 };
+  renderStudyQuizQuestion();
+  showScreen('studyQuizScreen');
+}
+
+function renderStudyQuizQuestion() {
+  const { study, questions, index, score } = studyQuizState;
+  const area = document.getElementById('studyQuizArea');
+
+  if (index >= questions.length) {
+    // Show results
+    const pct = Math.round(score / questions.length * 100);
+    const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '🎉' : '💪';
+    area.innerHTML = `
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:3rem;margin-bottom:12px">${emoji}</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--yellow);margin-bottom:8px">${score}/${questions.length}</div>
+        <div style="color:var(--text-muted);margin-bottom:24px">${study.name}</div>
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn btn-primary" onclick="startStudyQuiz('${study.id}')">🔄 Try again</button>
+          <button class="btn btn-secondary" onclick="showStudyList('${study.topic}')">← Back to studies</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const q = questions[index];
+  area.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-size:0.8rem;color:var(--text-muted)">${study.name}</span>
+      <span style="font-size:0.8rem;color:var(--text-muted)">${index + 1} / ${questions.length}</span>
+    </div>
+    <div style="font-size:1rem;font-weight:700;line-height:1.6;margin-bottom:20px">${q.q}</div>
+    <div id="sqRevealArea">
+      <button class="btn btn-primary" style="width:100%" onclick="revealStudyAnswer()">👁️ Show answer</button>
+    </div>`;
+}
+
+function revealStudyAnswer() {
+  const { questions, index } = studyQuizState;
+  const q = questions[index];
+  document.getElementById('sqRevealArea').innerHTML = `
+    <div style="background:rgba(16,185,129,0.1);border:1px solid var(--green);border-radius:12px;padding:14px;margin-bottom:16px;font-size:0.9rem;line-height:1.7">${q.a}</div>
+    <div style="text-align:center;margin-bottom:8px;font-size:0.85rem;color:var(--text-muted)">Did you get it right?</div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-primary" style="background:var(--green)" onclick="studyQuizAnswer(true)">✅ Yes, got it!</button>
+      <button class="btn btn-secondary" style="border-color:var(--red-light);color:var(--red-light)" onclick="studyQuizAnswer(false)">❌ Not quite</button>
+    </div>`;
+}
+
+function studyQuizAnswer(correct) {
+  if (correct) studyQuizState.score++;
+  studyQuizState.index++;
+  renderStudyQuizQuestion();
+}
+
+function exitStudyQuiz() {
+  showStudyList(studyQuizState.study.topic);
+}
 
 const questionBank = {
 
