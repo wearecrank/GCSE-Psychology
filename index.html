@@ -2979,10 +2979,10 @@ async function submitStudyAnswer() {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 400,
+        max_tokens: 500,
         messages: [{
           role: 'user',
-          content: `You are a GCSE Psychology examiner marking a student's answer. Be encouraging but honest.
+          content: `You are marking a GCSE Psychology student's answer. Be specific, encouraging and honest.
 
 QUESTION: ${q.q}
 
@@ -2990,36 +2990,74 @@ MODEL ANSWER: ${q.a}
 
 STUDENT'S ANSWER: ${answer}
 
-Give:
-1. A mark: ✅ Correct, ⚠️ Partially correct, or ❌ Needs more work
-2. One sentence of specific feedback on what they got right or wrong
-3. One key point they should remember
+Compare the student's answer to the model answer carefully. Then respond in EXACTLY this format:
 
-Keep it short, friendly and clear. Format as 3 short paragraphs.`
+MARK: [write exactly one of: CORRECT / PARTIAL / INCORRECT]
+
+SCORE: [write a fraction like 1/1 or 0.5/1 or 0/1]
+
+WHAT YOU GOT RIGHT: [one specific thing they did well — even if incorrect, find something positive. If nothing, say "You attempted the question."]
+
+WHAT TO IMPROVE: [one specific thing missing or wrong compared to the model answer]
+
+KEY POINT TO REMEMBER: [one memorable sentence to help them recall this for the exam]`
         }]
       })
     });
 
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`API error ${response.status}: ${errText}`);
+    }
+
     const data = await response.json();
     const feedback = data.content?.[0]?.text || '';
-    const isCorrect = feedback.includes('✅');
-    const isPartial = feedback.includes('⚠️');
 
-    if (isCorrect) studyQuizState.score++;
-    else if (isPartial) studyQuizState.score += 0.5;
+    if (!feedback) throw new Error('Empty response from API');
+
+    // Parse the structured response
+    const markMatch = feedback.match(/MARK:\s*(CORRECT|PARTIAL|INCORRECT)/i);
+    const rightMatch = feedback.match(/WHAT YOU GOT RIGHT:\s*([^\n]+)/i);
+    const improveMatch = feedback.match(/WHAT TO IMPROVE:\s*([^\n]+)/i);
+    const keyMatch = feedback.match(/KEY POINT TO REMEMBER:\s*([^\n]+)/i);
+
+    const mark = markMatch ? markMatch[1].toUpperCase() : 'PARTIAL';
+    const gotRight = rightMatch ? rightMatch[1].trim() : '';
+    const improve = improveMatch ? improveMatch[1].trim() : '';
+    const keyPoint = keyMatch ? keyMatch[1].trim() : '';
+
+    // Update score
+    if (mark === 'CORRECT') studyQuizState.score++;
+    else if (mark === 'PARTIAL') studyQuizState.score += 0.5;
+
+    // Pick colours and emoji based on mark
+    const markConfig = {
+      CORRECT:   { emoji: '✅', label: 'Correct!',        bg: 'rgba(16,185,129,0.12)',  border: 'var(--green)',      color: 'var(--green)' },
+      PARTIAL:   { emoji: '⚠️', label: 'Partially right', bg: 'rgba(245,158,11,0.12)',  border: 'var(--yellow)',     color: 'var(--yellow)' },
+      INCORRECT: { emoji: '❌', label: 'Needs more work', bg: 'rgba(239,68,68,0.12)',   border: 'var(--red-light)',  color: 'var(--red-light)' }
+    };
+    const cfg = markConfig[mark] || markConfig.PARTIAL;
 
     area.innerHTML = `
-      <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;margin-bottom:16px;font-size:0.88rem;line-height:1.7">
-        ${feedback.replace(/\n/g, '<br>')}
+      <div style="background:${cfg.bg};border:1.5px solid ${cfg.border};border-radius:14px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:${cfg.color};margin-bottom:12px">${cfg.emoji} ${cfg.label}</div>
+        ${gotRight ? `<div style="margin-bottom:10px;font-size:0.88rem;line-height:1.6"><strong style="color:var(--green)">✅ What you got right:</strong><br>${gotRight}</div>` : ''}
+        ${improve ? `<div style="margin-bottom:10px;font-size:0.88rem;line-height:1.6"><strong style="color:var(--yellow)">📝 To improve:</strong><br>${improve}</div>` : ''}
+        ${keyPoint ? `<div style="font-size:0.88rem;line-height:1.6;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px"><strong style="color:var(--purple-light)">🧠 Key point:</strong><br>${keyPoint}</div>` : ''}
       </div>
-      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:12px;margin-bottom:16px;font-size:0.82rem;color:var(--text-muted)">
-        <strong style="color:var(--green)">Model answer:</strong><br>${q.a}
+      <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:14px;font-size:0.82rem;line-height:1.6">
+        <strong style="color:var(--text-muted)">Model answer:</strong><br><br>${q.a}
       </div>
       <button class="btn btn-primary" style="width:100%" onclick="studyQuizAnswer()">Next question →</button>`;
 
   } catch(e) {
-    // Fall back to self-marking if API fails
-    revealStudyAnswer();
+    // Show the actual error so we can diagnose it
+    area.innerHTML = `
+      <div style="background:rgba(239,68,68,0.1);border:1px solid var(--red-light);border-radius:12px;padding:14px;margin-bottom:14px;font-size:0.85rem">
+        <strong>⚠️ AI marking failed</strong><br>
+        <span style="color:var(--text-muted);font-size:0.8rem">${e.message}</span>
+      </div>
+      <button class="btn btn-secondary" style="width:100%;margin-bottom:8px" onclick="revealStudyAnswer()">👁️ Self-mark instead</button>`;
   }
 }
 
